@@ -3,40 +3,42 @@
 import ctypes
 
 from ctypes import cdll, windll, WINFUNCTYPE
-from ctypes.wintypes import LPCSTR
+from ctypes.wintypes import LPCSTR, HANDLE, HMODULE, LPVOID
 
 import os
 
-_hCore = None
 
-# load core lib from current working directory
-core_path = os.path.join(os.getcwd(), "gscore")
-print("try loading core lib(%s)..." % core_path)
+def _tryLoadCore():
+    ''' Load gsCore lib to process '''
+    # load core lib from current working directory
+    core_path = os.path.join(os.getcwd(), "gscore")
+    print("try loading core lib(%s)..." % core_path)
 
-try:
-    if os.name == 'nt':
-        _hCore = windll.LoadLibrary(core_path)
-    else:
-        _hCore = cdll.LoadLibrary(core_path)
-except Exception as ex:
-    print(ex)
+    hCore = None
 
+    try:
+        if os.name == 'nt':
+            hCore = windll.LoadLibrary(core_path)
+        else:
+            hCore = cdll.LoadLibrary(core_path)
+    except:
+        # load core lib from PATH
+        if os.name == 'nt':
+            print("\ntry loading core from PATH...")
 
-# load core lib from PATH
-if _hCore == None:
-    if os.name == 'nt':
-        print("\ntry loading core from PATH...")
+            try:
+                handle = windll.kernel32.LoadLibraryW("gscore")
+                print("Handle=%s" % hex(handle))
+                if handle:
+                    hCore = ctypes.WinDLL("gscore", handle=handle)
+            except Exception as ex:
+                print(ex)
 
-        try:
-            handle = windll.kernel32.LoadLibraryW("gscore")
-            print("Handle=%s" % hex(handle))
-            if handle:
-                _hCore = ctypes.WinDLL("gscore", handle=handle)
+    return hCore
 
-        except Exception as ex:
-            print(ex)
+_hCore = _tryLoadCore()
 
-if _hCore == None:
+if _hCore is None:
     raise RuntimeError("Core lib cannot load!")
 
 
@@ -45,10 +47,7 @@ if _hCore == None:
 """""""""""""""""""""""
  Prototypes
 """""""""""""""""""""""
-
-gsGetVersion = WINFUNCTYPE(LPCSTR)(_hCore[2])
-
-
+gsGetVersion = WINFUNCTYPE(LPCSTR)((2, _hCore))
 
 
 def getVersion():
