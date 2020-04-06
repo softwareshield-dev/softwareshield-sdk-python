@@ -1,5 +1,5 @@
 __all__ = [
-    "gsGetVersion", "gsInit"
+    "gsGetVersion", "gsInit", "gsCleanUp", "gsCloseHandle", "gsGetLastErrorCode", "gsGetLastErrorMessage"
 ]
 
 from .v5 import *

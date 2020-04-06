@@ -39,7 +39,7 @@ def _tryLoadCore():
 _hCore = _tryLoadCore()
 
 if _hCore is None:
-    raise RuntimeError("Core lib cannot load!")
+    raise RuntimeError("Core lib cannot be loaded!")
 
 
 
@@ -50,6 +50,11 @@ if _hCore is None:
 gsGetVersion = WINFUNCTYPE(LPCSTR)((2, _hCore))
 gsInit = WINFUNCTYPE(INT, LPCSTR, LPCSTR, LPCSTR, LPVOID)((3, _hCore))
 
+gsCleanUp = WINFUNCTYPE(INT)((4, _hCore))
+gsCloseHandle = WINFUNCTYPE(None)((5, _hCore))
+
+gsGetLastErrorMessage = WINFUNCTYPE(LPCSTR)((7, _hCore))
+gsGetLastErrorCode = WINFUNCTYPE(INT)((8, _hCore))
 
 
 
