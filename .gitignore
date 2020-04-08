@@ -2,6 +2,7 @@
 *.swp
 *.dll
 .vscode/
+.vs/
 
 **/__pycache__/
 

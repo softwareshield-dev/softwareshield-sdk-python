@@ -6,7 +6,13 @@ from .util import *
 import os
 import logging
 
-
+# decorator to enforce the gs.Core must be initialized before api can be called.
+def core_must_inited(f):
+    def new_f(*args):
+        if not Core._inst._inited:
+            raise Exception("gs.Core must be initialized!")
+        return f(*args)
+    return new_f
 
 class Core(object):
     _inst = None # unique instance
@@ -25,7 +31,8 @@ class Core(object):
 
     def _onCreate(self):
         ''' Initialize Core only once here '''
-        self._rc = 0
+        self._rc = -1 # not initialized
+        self._inited = False # not initialized yet
 
     @staticmethod
     def getVersion():
@@ -40,17 +47,54 @@ class Core(object):
         mustbe(str, "pathToLic", pathToLic)
         mustbe(str, "password", password)
 
-        if pathToLic != '':
-            pathToLic = os.path.abspath(pathToLic)
-            logging.info("license path (%s)", pathToLic)
+        # already initialized successfully?
+        if self._rc != 0:
+            if pathToLic != '':
+                pathToLic = os.path.abspath(pathToLic)
+                logging.info("license path (%s)", pathToLic)
 
-        self._rc = gsInit(str2pchar(productId), str2pchar(pathToLic), str2pchar(password),None)
-        logging.debug("rc: %d", self._rc)
+            self._rc = gsInit(str2pchar(productId), str2pchar(pathToLic), str2pchar(password),None)
+            self._inited = True
+            logging.debug("rc: %d", self._rc)
+        else:
+            logging.debug("init: already initialized, bypass");
+        
         return self._rc == 0
 
+    def cleanUp(self):
+        """
+        Cleanup sdk resources on app exit.
+        """
+        gsCleanUp()
+
     @property
-    def LastErrorCode(self):
+    @core_must_inited
+    def lastErrorCode(self):
         ''' Last SDK error code '''
         return gsGetLastErrorCode()
 
+    @property
+    @core_must_inited
+    def lastErrorMessage(self):
+        ''' Last SDK error message '''
+        return pchar2str(gsGetLastErrorMessage())
+
+
+    @property
+    @core_must_inited
+    def productId(self):
+        ''' Product Id '''
+        return pchar2str(gsGetProductId())
+    
+    @property
+    @core_must_inited
+    def productName(self):
+        ''' Product Name '''
+        return pchar2str(gsGetProductName())
+    
+    @property
+    @core_must_inited
+    def buildId(self):
+        ''' License Build Id '''
+        return gsGetBuildId()
     
