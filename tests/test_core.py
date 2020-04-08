@@ -51,5 +51,19 @@ class TestCoreAPI(unittest.TestCase):
         self.assertEqual(gs.Core().productId, self.productId)
         self.assertEqual(gs.Core().productName, self.productName)
         self.assertEqual(gs.Core().buildId, self.buildId)
+    
+    def test_entity(self):
+        entities = gs.Core().entities
+        self.assertEqual(len(entities), 1)
+
+        eid0 = "62a6ec4c-c05a-4fae-be40-2011a79f8c62"
+        e0 = entities[0]
+        self.assertEqual(e0.id, eid0)
+        self.assertEqual(e0.name, "E1")
+
+        self.assertEqual(e0, gs.Core().getEntityById(eid0))
+
+        with self.assertRaises(ValueError):
+            gs.Core().getEntityById("x1")
 
 

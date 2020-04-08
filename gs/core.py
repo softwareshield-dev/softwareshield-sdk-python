@@ -2,6 +2,7 @@
 
 from .intf import *
 from .util import *
+from .entity import *
 
 import os
 import logging
@@ -33,6 +34,7 @@ class Core(object):
         ''' Initialize Core only once here '''
         self._rc = -1 # not initialized
         self._inited = False # not initialized yet
+        self._entities = None # entity list
 
     @staticmethod
     def getVersion():
@@ -97,4 +99,28 @@ class Core(object):
     def buildId(self):
         ''' License Build Id '''
         return gsGetBuildId()
+
+    @property
+    @core_must_inited
+    def entities(self):
+        ''' all defined entities '''
+        if not self._entities:
+            self._entities = []
+
+            n = gsGetEntityCount()
+            if n > 0:
+                for i in range(n):
+                    self._entities.append(Entity(gsOpenEntityByIndex(i)))
+
+        return self._entities
     
+    @core_must_inited
+    def getEntityById(self, entityId):
+        ''' get entity by its id'''
+        for e in self.entities:
+            if e.id == entityId:
+                return e
+
+        msg = "entity not found, id=(%s)" %(entityId)
+        logging.warning(msg)
+        raise ValueError(msg)
