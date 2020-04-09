@@ -3,8 +3,8 @@
 import ctypes
 
 from ctypes import cdll, windll, WINFUNCTYPE
-from ctypes.wintypes import LPCSTR, HANDLE, HMODULE, LPVOID, INT, DWORD, UINT, BOOL
-from ctypes import c_bool
+from ctypes.wintypes import LPCSTR, HANDLE, HMODULE, LPVOID, INT, DWORD, UINT, BOOL, BYTE
+from ctypes import c_bool, POINTER
 
 import os
 
@@ -89,6 +89,29 @@ gsIsLicenseValid = WINFUNCTYPE(c_bool, HANDLE)((34, _hCore))
 
 gsLockLicense = WINFUNCTYPE(None, HANDLE)((138, _hCore))
 
+# Variable
+gsGetVariable = WINFUNCTYPE(HANDLE, LPCSTR)((52, _hCore))
+gsGetVariableName = WINFUNCTYPE(LPCSTR, HANDLE)((53, _hCore))
+gsGetVariableType = WINFUNCTYPE(BYTE, HANDLE)((54, _hCore))
+gsVariableTypeToString = WINFUNCTYPE(LPCSTR, BYTE)((55, _hCore))
+gsGetVariableAttr = WINFUNCTYPE(INT, HANDLE)((56, _hCore))
 
+gsGetVariableValueAsString = WINFUNCTYPE(LPCSTR, HANDLE)((57, _hCore))
+gsSetVariableValueFromString = WINFUNCTYPE(c_bool, HANDLE, LPCSTR)((58, _hCore))
+
+gsGetVariableValueAsInt = WINFUNCTYPE(c_bool, HANDLE, POINTER(ctypes.c_int))((59, _hCore))
+gsSetVariableValueFromInt = WINFUNCTYPE(c_bool, HANDLE, ctypes.c_int)((60, _hCore))
+
+gsGetVariableValueAsInt64 = WINFUNCTYPE(c_bool, HANDLE, POINTER(ctypes.c_int64))((61, _hCore))
+gsSetVariableValueFromInt64 = WINFUNCTYPE(c_bool, HANDLE, ctypes.c_int64)((62, _hCore))
+
+gsGetVariableValueAsFloat = WINFUNCTYPE(c_bool, HANDLE, POINTER(ctypes.c_float))((63, _hCore))
+gsSetVariableValueFromFloat = WINFUNCTYPE(c_bool, HANDLE, ctypes.c_float)((64, _hCore))
+
+gsGetVariableValueAsDouble = WINFUNCTYPE(c_bool, HANDLE, POINTER(ctypes.c_double))((78, _hCore))
+gsSetVariableValueFromDouble = WINFUNCTYPE(c_bool, HANDLE, ctypes.c_double)((79, _hCore))
+
+gsGetVariableValueAsTime = WINFUNCTYPE(c_bool, HANDLE, POINTER(ctypes.c_uint64))((68, _hCore))
+gsSetVariableValueFromTime = WINFUNCTYPE(c_bool, HANDLE, ctypes.c_uint64)((69, _hCore))
 
 

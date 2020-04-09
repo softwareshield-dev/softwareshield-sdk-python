@@ -18,6 +18,9 @@ class License:
         
         if not self._handle:
             raise RuntimeError("entity (%s) has no license attached" % (entity.name))
+
+    def __del__(self):
+        gsCloseHandle(self._handle)
     
     @property
     def handle(self):
@@ -40,7 +43,7 @@ class License:
     @property
     def valid(self):
         return gsIsLicenseValid(self._handle)
-        
+
     @property
     def status(self):
         return LicenseStatus(gsGetLicenseStatus(self._handle))

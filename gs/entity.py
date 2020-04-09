@@ -17,8 +17,6 @@ class EntityAttribute(IntFlag):
     AUTOSTART = 16 # Entity is auto-start (entity.beginAccess() is called automatically on app start)
 
 class Entity:
-
-
     def __init__(self, handle):
         if handle is None:
             raise ValueError("Invalid entity handle")
@@ -27,6 +25,9 @@ class Entity:
 
         # bundled license
         self._lic = License(self)
+
+    def __del__(self):
+        gsCloseHandle(self._handle)
     
     @property
     def handle(self):

@@ -33,10 +33,10 @@ class TestCoreAPI(unittest.TestCase):
         #self.assertFalse(core.init("","",""))
         #self.assertTrue(core.LastErrorCode < 0)
 
-        self.buildId = 31
+        self.buildId = 32
         self.productId = "8fb82f54-ecf9-451c-9976-2344aefeaca4"
         self.productName = "Ne2_201908"
-        self.pathLic = getPathToTestCaseLicense("Ne2_201908.lic")
+        self.pathLic = getPathToTestCaseLicense("Ne2_201908_b32.lic")
         self.password = "rljycq&3232&RRHP"
 
         self.assertTrue(core.init(self.productId, self.pathLic, self.password))
@@ -85,7 +85,17 @@ class TestCoreAPI(unittest.TestCase):
             self.assertTrue(e0.locked)
             self.assertFalse(e0.unlocked)
 
+    def test_var(self):
+        ''' test variable '''
+        self.assertRaises(ValueError, gs.Variable.get, "level")
 
+        age = gs.Variable.get("age")
+        self.assertEqual(age.name, "age")
+        self.assertEqual(age.value, 10)
+
+        nm = gs.Variable.get("name")
+        self.assertEqual(nm.name, "name")
+        self.assertEqual(nm.value, "randy")
 
 
 
