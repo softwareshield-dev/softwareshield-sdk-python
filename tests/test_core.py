@@ -61,9 +61,28 @@ class TestCoreAPI(unittest.TestCase):
         self.assertEqual(e0.id, eid0)
         self.assertEqual(e0.name, "E1")
 
+        at = e0.attribute
+        print(at)
+
         self.assertEqual(e0, gs.Core().getEntityById(eid0))
 
         with self.assertRaises(ValueError):
             gs.Core().getEntityById("x1")
+        
+        # not being accessed
+        self.assertFalse(e0.accessing)
+        self.assertTrue(e0.autoStart)
+
+        if e0.accessible:
+            self.assertTrue(e0.beginAccess())
+            self.assertTrue(e0.accessing)
+            self.assertTrue(e0.endAccess())
+        else:
+            self.assertTrue(e0.locked)
+            self.assertFalse(e0.unlocked)
+
+
+
+
 
 

@@ -80,6 +80,14 @@ gsBeginAccessEntity = WINFUNCTYPE(c_bool, HANDLE)((20, _hCore))
 gsEndAccessEntity = WINFUNCTYPE(c_bool, HANDLE)((21, _hCore))
 
 # License
+gsOpenLicense = WINFUNCTYPE(HANDLE, HANDLE)((137, _hCore))
+gsGetLicenseId = WINFUNCTYPE(LPCSTR, HANDLE)((28, _hCore))
+gsGetLicenseName = WINFUNCTYPE(LPCSTR, HANDLE)((22, _hCore))
+gsGetLicenseDescription = WINFUNCTYPE(LPCSTR, HANDLE)((23, _hCore))
+gsGetLicenseStatus = WINFUNCTYPE(DWORD, HANDLE)((24, _hCore))
+gsIsLicenseValid = WINFUNCTYPE(c_bool, HANDLE)((34, _hCore))
+
+gsLockLicense = WINFUNCTYPE(None, HANDLE)((138, _hCore))
 
 
 

@@ -105,13 +105,7 @@ class Core(object):
     def entities(self):
         ''' all defined entities '''
         if not self._entities:
-            self._entities = []
-
-            n = gsGetEntityCount()
-            if n > 0:
-                for i in range(n):
-                    self._entities.append(Entity(gsOpenEntityByIndex(i)))
-
+            self._entities = [ Entity(gsOpenEntityByIndex(i)) for i in range(gsGetEntityCount()) ]
         return self._entities
     
     @core_must_inited
