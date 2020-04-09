@@ -44,10 +44,6 @@ class Entity:
     def description(self):
         return pchar2str(gsGetEntityDescription(self._handle))
 
-    @property
-    def attribute(self):
-        return EntityAttribute(gsGetEntityAttributes(self._handle))
-
     def beginAccess(self):
         """
          Try start accessing an entity.
@@ -73,7 +69,11 @@ class Entity:
         """ lock the entity's license """
         self.license.lock()
 
-    # status helper
+    # attribute and helpers
+    @property
+    def attribute(self):
+        return EntityAttribute(gsGetEntityAttributes(self._handle))
+
     @property
     def accessible(self):
         """ entity can be accessed """

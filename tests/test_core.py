@@ -73,6 +73,10 @@ class TestCoreAPI(unittest.TestCase):
         self.assertFalse(e0.accessing)
         self.assertTrue(e0.autoStart)
 
+        self.assertEqual(e0.accessible, e0.license.valid)
+        self.assertEqual(e0.locked, e0.license.locked)
+        self.assertEqual(e0.unlocked, e0.license.unlocked)
+
         if e0.accessible:
             self.assertTrue(e0.beginAccess())
             self.assertTrue(e0.accessing)

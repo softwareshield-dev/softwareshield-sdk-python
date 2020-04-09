@@ -2,7 +2,13 @@
 
 from .intf import *
 from .util import *
+from enum import IntEnum
 
+class LicenseStatus(IntEnum):
+    INVALID = -1 # The current status value is invalid /unknown
+    LOCKED = 0   # the license is disabled permanently by lock() or already expired, the license model's logic is bypassed.
+    UNLOCKED = 1 # the license is already unlocked, the license model's logic is bypassed.
+    ACTIVE = 2   # the license model's logic is being used to decide if the protected entity is accessible
 
 class License:
     def __init__(self, entity):
@@ -27,13 +33,31 @@ class License:
     def description(self):
         return pchar2str(gsGetLicenseDescription(self._handle))
     @property
-    def isValid(self):
-        return gsIsLicenseValid(self._handle)
-    @property
     def entity(self):
         ''' the entity to protect '''
         return self._entity
+    
+    @property
+    def valid(self):
+        return gsIsLicenseValid(self._handle)
+        
+    @property
+    def status(self):
+        return LicenseStatus(gsGetLicenseStatus(self._handle))
+    # status helper
+    @property
+    def locked(self):
+        return self.status == LicenseStatus.LOCKED
+    @property
+    def expired(self):
+        return self.status == LicenseStatus.LOCKED
+    @property
+    def unlocked(self):
+        return self.status == LicenseStatus.UNLOCKED
 
     def lock(self):
         ''' lock the license '''
         gsLockLicense(self._handle)
+
+    
+    
