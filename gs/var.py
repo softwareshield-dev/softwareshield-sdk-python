@@ -48,6 +48,9 @@ class Variable:
         return pchar2str(gsGetVariableName(self._handle))
     @property
     def value(self):
+        if self._attr & _VarAttr.READ == 0:
+            raise RuntimeError("variable (%s) not readable" % self.name)
+
         if self._type == _VarType.BOOL:
             v = ctypes.c_int()
             if gsGetVariableValueAsInt(self._handle, ctypes.byref(v)):
@@ -83,6 +86,55 @@ class Variable:
             if gsGetVariableValueAsInt64(self._handle, ctypes.byref(v)):
                 return datetime.utcfromtimestamp(v.value)
 
-
-
         raise RuntimeError("Unsupported variable type, name (%s)" % self.name)
+
+    @value.setter
+    def value(self, v):
+        if self._attr & _VarAttr.WRITE == 0:
+            raise RuntimeError("variable (%s) not writable" % self.name)
+
+        def raiseError():
+            raise RuntimeError("variable (%s) set failure" % self.name)
+
+        if self._type == _VarType.BOOL:
+            mustbe(bool, 'v', v)
+            if not gsSetVariableValueFromInt(self._handle, 1 if v else 0):
+                raiseError()
+        # int
+        elif self._type == _VarType.INT:
+            mustbe(int, 'v', v)
+            if not gsSetVariableValueFromInt(self._handle, ctypes.c_int(v)):
+                raiseError()
+        
+        elif self._type == _VarType.INT64:
+            mustbe(int, 'v', v)
+            if not gsSetVariableValueFromInt64(self._handle, ctypes.c_int64(v)):
+                raiseError()
+        
+        elif self._type == _VarType.FLOAT:
+            mustbe(float, 'v', v)
+            if not gsSetVariableValueFromFloat(self._handle, ctypes.c_float(v)):
+                raiseError()
+        
+        elif self._type == _VarType.DOUBLE:
+            mustbe(float, 'v', v)
+            if not gsSetVariableValueFromDouble(self._handle, ctypes.c_double(v)):
+                raiseError()
+        
+        # string
+        elif self._type == _VarType.STRING:
+            mustbe(str, 'v', v)
+            if not gsSetVariableValueFromString(self._handle, str2pchar(v)):
+                raiseError()
+
+        # time
+        elif self._type == _VarType.TIME:
+            mustbe(datetime, 'v', v)
+            # 3.x:
+            # timestamp = int(v.timestamp()+0.5)
+            timestamp = int((v - datetime(1970, 1, 1)).total_seconds())
+            if not gsSetVariableValueFromInt64(self._handle, ctypes.c_int64(timestamp)):
+                raiseError()
+
+        else:
+            raise RuntimeError("Unsupported variable type, name (%s)" % self.name)

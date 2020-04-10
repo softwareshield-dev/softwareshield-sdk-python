@@ -1,6 +1,7 @@
 import unittest
 import gs
 import os
+from datetime import datetime
 
 
 def getPathToTestCaseLicense(prj):
@@ -93,7 +94,7 @@ class TestCoreAPI(unittest.TestCase):
 
         age = core.getVariable("age")
         self.assertEqual(age.name, "age")
-        self.assertEqual(age.value, 10)
+        self.assertEqual(age.value, 200)
 
         nm = core.getVariable("name")
         self.assertEqual(nm.name, "name")
@@ -104,6 +105,24 @@ class TestCoreAPI(unittest.TestCase):
 
         t = core.getVariable("birthday").value
         self.assertEqual(str(t), '2020-04-01 22:00:00')
+
+        # set
+        def writeTest(vname, v):
+            x = core.getVariable(vname)
+            old_v = x.value
+            x.value = v
+            if isinstance(v, float):
+                self.assertAlmostEqual(x.value,v, delta=0.1)
+            else:
+                self.assertEqual(x.value, v)
+            x.value = old_v
+
+        writeTest("age", 123)
+        writeTest("name", "janet")
+        writeTest("male", False)
+        writeTest("salary", 888.88)
+        dt = datetime.fromtimestamp(int(datetime.now().timestamp()))
+        writeTest("birthday", dt)
 
 
 
