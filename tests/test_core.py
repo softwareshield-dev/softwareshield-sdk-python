@@ -87,15 +87,24 @@ class TestCoreAPI(unittest.TestCase):
 
     def test_var(self):
         ''' test variable '''
-        self.assertRaises(ValueError, gs.Variable.get, "level")
+        core = gs.Core()
+        with self.assertRaises(ValueError):
+            core.getVariable("level")
 
-        age = gs.Variable.get("age")
+        age = core.getVariable("age")
         self.assertEqual(age.name, "age")
         self.assertEqual(age.value, 10)
 
-        nm = gs.Variable.get("name")
+        nm = core.getVariable("name")
         self.assertEqual(nm.name, "name")
         self.assertEqual(nm.value, "randy")
+
+        self.assertEqual(core.getVariable("male").value, True)
+        self.assertEqual(core.getVariable("salary").value, 123.5)
+
+        t = core.getVariable("birthday").value
+        self.assertEqual(str(t), '2020-04-01 22:00:00')
+
 
 
 

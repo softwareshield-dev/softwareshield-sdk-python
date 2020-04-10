@@ -4,6 +4,7 @@ from .util import *
 
 import ctypes
 import logging
+from datetime import datetime
 
 from enum import IntEnum, IntFlag
 
@@ -34,6 +35,7 @@ class Variable:
         typ = gsGetVariableType(handle)
         typstr = pchar2str(gsVariableTypeToString(typ))
         logging.debug("typename: (%s)" % typstr)
+        print("typename: (%s)" % typstr)
 
         self._type = _VarType(gsGetVariableType(handle))
         self._attr = _VarAttr(gsGetVariableAttr(handle))
@@ -41,19 +43,15 @@ class Variable:
     def __del__(self):
         gsCloseHandle(self._handle)
     
-    @staticmethod
-    def get(name):
-        h = gsGetVariable(str2pchar(name))
-        if h is None:
-            raise ValueError("variable (%s) not found" % name)
-
-        return Variable(h)
-
     @property
     def name(self):
         return pchar2str(gsGetVariableName(self._handle))
     @property
     def value(self):
+        if self._type == _VarType.BOOL:
+            v = ctypes.c_int()
+            if gsGetVariableValueAsInt(self._handle, ctypes.byref(v)):
+                return v.value != 0
         # int
         if self._type == _VarType.INT:
             v = ctypes.c_int()
@@ -80,7 +78,11 @@ class Variable:
             return pchar2str(gsGetVariableValueAsString(self._handle))
 
         # time
-        if self._type == _VarType.TIME:pass
+        if self._type == _VarType.TIME:
+            v = ctypes.c_int64()
+            if gsGetVariableValueAsInt64(self._handle, ctypes.byref(v)):
+                return datetime.utcfromtimestamp(v.value)
+
 
 
         raise RuntimeError("Unsupported variable type, name (%s)" % self.name)

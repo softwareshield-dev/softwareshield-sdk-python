@@ -3,6 +3,7 @@
 from .intf import *
 from .util import *
 from .entity import *
+from .var import Variable
 
 import os
 import logging
@@ -118,3 +119,11 @@ class Core(object):
         msg = "entity not found, id=(%s)" %(entityId)
         logging.warning(msg)
         raise ValueError(msg)
+
+    @core_must_inited
+    def getVariable(self, name):
+        h = gsGetVariable(str2pchar(name))
+        if h is None:
+            raise ValueError("variable (%s) not found" % name)
+
+        return Variable(h)
