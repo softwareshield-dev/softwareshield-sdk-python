@@ -2,6 +2,8 @@
 
 from .intf import *
 from .util import *
+from .var import *
+
 from enum import IntEnum
 
 class LicenseStatus(IntEnum):
@@ -15,9 +17,11 @@ class License:
         self._entity = entity
 
         self._handle = gsOpenLicense(entity.handle)
-        
         if not self._handle:
             raise RuntimeError("entity (%s) has no license attached" % (entity.name))
+
+        # params
+        self._params = None # late-binding
 
     def __del__(self):
         gsCloseHandle(self._handle)
@@ -39,6 +43,12 @@ class License:
     def entity(self):
         ''' the entity to protect '''
         return self._entity
+
+    @property
+    def params(self):
+        if self._params is None:
+            self._params = { x.name: x for x in [Variable(gsGetLicenseParamByIndex(self._handle, i)) for i in range(gsGetLicenseParamCount(self._handle))] }
+        return self._params
     
     @property
     def valid(self):

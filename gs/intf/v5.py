@@ -89,6 +89,8 @@ gsIsLicenseValid = WINFUNCTYPE(c_bool, HANDLE)((34, _hCore))
 
 gsLockLicense = WINFUNCTYPE(None, HANDLE)((138, _hCore))
 
+gsGetLicenseParamCount = WINFUNCTYPE(INT, HANDLE)((29, _hCore))
+gsGetLicenseParamByIndex = WINFUNCTYPE(HANDLE, HANDLE, INT)((30, _hCore))
 # Variable
 gsGetVariable = WINFUNCTYPE(HANDLE, LPCSTR)((52, _hCore))
 gsGetVariableName = WINFUNCTYPE(LPCSTR, HANDLE)((53, _hCore))

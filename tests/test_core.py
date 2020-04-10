@@ -124,6 +124,11 @@ class TestCoreAPI(unittest.TestCase):
         dt = datetime.fromtimestamp(int(datetime.now().timestamp()))
         writeTest("birthday", dt)
 
+    def test_licenseParam(self):
+        lic = gs.Core().entities[0].license
+        print("lic: %s" % lic.name)
+        print(lic.params)
+
 
 
 

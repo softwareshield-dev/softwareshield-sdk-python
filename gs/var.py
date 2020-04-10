@@ -14,6 +14,7 @@ class _VarAttr(IntFlag):
     PERSISTENT = 4  # persistent variable
 
 class _VarType(IntEnum):
+    UINT = 3    # unsigned int32
     INT = 7     # 32bit-integer
     INT64 = 8   # 64bit integer
     FLOAT = 9   # float
@@ -43,6 +44,9 @@ class Variable:
     def __del__(self):
         gsCloseHandle(self._handle)
     
+    def __repr__(self):
+        return "(%s) => %s" % (self.name, self.value)
+
     @property
     def name(self):
         return pchar2str(gsGetVariableName(self._handle))
@@ -61,7 +65,7 @@ class Variable:
             if gsGetVariableValueAsInt(self._handle, ctypes.byref(v)):
                 return v.value
         
-        if self._type == _VarType.INT64:
+        if self._type == _VarType.INT64 or self._type == _VarType.UINT:
             v = ctypes.c_int64()
             if gsGetVariableValueAsInt64(self._handle, ctypes.byref(v)):
                 return v.value
@@ -106,7 +110,7 @@ class Variable:
             if not gsSetVariableValueFromInt(self._handle, ctypes.c_int(v)):
                 raiseError()
         
-        elif self._type == _VarType.INT64:
+        elif self._type == _VarType.INT64 or self._type == _VarType.UINT:
             mustbe(int, 'v', v)
             if not gsSetVariableValueFromInt64(self._handle, ctypes.c_int64(v)):
                 raiseError()
