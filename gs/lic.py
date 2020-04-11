@@ -28,6 +28,18 @@ class LicenseStatus(IntEnum):
 
 # LicenseId -> Inspector map
 _Inspectors = {}
+class inspect:
+    '''
+    decorator to associate inspector with license
+    '''
+    def __init__(self, licId: LicenseId):
+        self._id = licId
+
+    def __call__(self, cls):
+        _Inspectors[self._id] = cls
+        return cls
+
+
 
 class License:
     def __init__(self, entity):
@@ -35,7 +47,7 @@ class License:
 
         self._handle = gsOpenLicense(entity.handle)
         if not self._handle:
-            raise RuntimeError("entity (%s) has no license attached" % (entity.name))
+            raise RuntimeError(f"entity ({entity.name}) has no license attached")
 
         self._name = pchar2str(gsGetLicenseName(self._handle))
         self._id = LicenseId(pchar2str(gsGetLicenseId(self._handle)))
@@ -104,18 +116,6 @@ class License:
     
 # License Model Inspectors
 
-class inspect:
-    '''
-    decorator to associate inspector with license
-    '''
-    def __init__(self, licId: LicenseId):
-        self._id = licId
-
-    def __call__(self, cls):
-        _Inspectors[self._id] = cls
-        return cls
-
-
 @inspect(LicenseId.TRIAL_PERIOD)
 class LM_Period:
     """
@@ -126,23 +126,21 @@ class LM_Period:
     
     def __repr__(self):
         if self.used:
-            return '''
-                used: %r \n
-                expirePeriodInSeconds: %d \n
-                secondsLeft: %d \n
-                secondsPassed: %d \n
-                firstAccessDate: %s \n
-                expireDate: %s \n
-                ''' % (self.used, self.expirePeriodInSeconds, self.secondsLeft, self.secondsPassed, self.firstAccessDate, self.expireDate)
+            return f'''
+                used: {self.used} \n
+                expirePeriodInSeconds: {self.expirePeriodInSeconds} \n
+                secondsLeft: {self.secondsLeft} \n
+                secondsPassed: {self.secondsPassed} \n
+                firstAccessDate: {self.firstAccessDate} \n
+                expireDate: {self.expireDate} '''
         else:
-            return '''
-                used: %r \n
-                expirePeriodInSeconds: %d \n
-                secondsLeft: %d \n
-                secondsPassed: %d \n
+            return f'''
+                used: {self.used} \n
+                expirePeriodInSeconds: {self.expirePeriodInSeconds} \n
+                secondsLeft: {self.secondsLeft} \n
+                secondsPassed: {self.secondsPassed} \n
                 firstAccessDate: N/A \n
-                expireDate: N/A \n
-                ''' % (self.used, self.expirePeriodInSeconds, self.secondsLeft, self.secondsPassed )
+                expireDate: N/A '''
 
 
     @property

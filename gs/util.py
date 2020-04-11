@@ -4,7 +4,7 @@ from ctypes import c_char_p
 
 def mustbe(vtype, vname, v):
     if not isinstance(v, vtype):
-        raise TypeError("(%s) must be of type (%s)!" % (vname, vtype))
+        raise TypeError(f"({vname}) must be of type ({vtype})!")
 
 def str2pchar(v):
     """ Convert str to char* """

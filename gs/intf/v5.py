@@ -13,7 +13,7 @@ def _tryLoadCore():
     ''' Load gsCore lib to process '''
     # load core lib from current working directory
     core_path = os.path.join(os.getcwd(), "gscore")
-    print("try loading core lib(%s)..." % core_path)
+    print(f"try loading core lib({core_path})...")
 
     hCore = None
 
@@ -29,7 +29,7 @@ def _tryLoadCore():
 
             try:
                 handle = windll.kernel32.LoadLibraryW("gscore")
-                print("Handle=%s" % hex(handle))
+                print(f"Handle={hex(handle)}")
                 if handle:
                     hCore = ctypes.WinDLL("gscore", handle=handle)
             except Exception as ex:

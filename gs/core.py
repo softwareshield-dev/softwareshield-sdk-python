@@ -54,13 +54,13 @@ class Core(object):
         if self._rc != 0:
             if pathToLic != '':
                 pathToLic = os.path.abspath(pathToLic)
-                logging.info("license path (%s)", pathToLic)
+                logging.info(f"license path ({pathToLic})")
 
             self._rc = gsInit(str2pchar(productId), str2pchar(pathToLic), str2pchar(password),None)
             self._inited = True
-            logging.debug("rc: %d", self._rc)
+            logging.debug(f"rc: {self._rc}")
         else:
-            logging.debug("init: already initialized, bypass");
+            logging.debug("init: already initialized, bypass")
         
         return self._rc == 0
 
@@ -116,7 +116,7 @@ class Core(object):
             if e.id == entityId:
                 return e
 
-        msg = "entity not found, id=(%s)" %(entityId)
+        msg = f"entity not found, id=({entityId})"
         logging.warning(msg)
         raise ValueError(msg)
 
@@ -124,6 +124,6 @@ class Core(object):
     def getVariable(self, name):
         h = gsGetVariable(str2pchar(name))
         if h is None:
-            raise ValueError("variable (%s) not found" % name)
+            raise ValueError(f"variable ({name}) not found")
 
         return Variable(h)

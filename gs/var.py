@@ -35,8 +35,7 @@ class Variable:
         self._handle = handle
         typ = gsGetVariableType(handle)
         typstr = pchar2str(gsVariableTypeToString(typ))
-        logging.debug("typename: (%s)" % typstr)
-        print("typename: (%s)" % typstr)
+        logging.debug(f"typename: ({typstr})")
 
         self._type = _VarType(gsGetVariableType(handle))
         self._attr = _VarAttr(gsGetVariableAttr(handle))
@@ -45,7 +44,7 @@ class Variable:
         gsCloseHandle(self._handle)
     
     def __repr__(self):
-        return "(%s) => %s" % (self.name, self.value)
+        return f"{self.name} => {self.value}"
 
     @property
     def name(self)->str:
@@ -53,9 +52,9 @@ class Variable:
     @property
     def value(self)->any:
         if self._attr & _VarAttr.READ == 0:
-            raise RuntimeError("variable (%s) not readable" % self.name)
+            raise RuntimeError(f"variable ({self.name}) not readable")
         if not self.valid:
-            raise RuntimeError("variable (%s) does not hold a valid value" % self.name)
+            raise RuntimeError(f"variable ({self.name}) does not hold a valid value")
 
         if self._type == _VarType.BOOL:
             v = ctypes.c_int()
@@ -92,15 +91,15 @@ class Variable:
             if gsGetVariableValueAsInt64(self._handle, ctypes.byref(v)):
                 return datetime.utcfromtimestamp(v.value)
 
-        raise RuntimeError("Unsupported variable type, name (%s)" % self.name)
+        raise RuntimeError(f"Unsupported variable type, name ({self.name})")
 
     @value.setter
     def value(self, v: any):
         if self._attr & _VarAttr.WRITE == 0:
-            raise RuntimeError("variable (%s) not writable" % self.name)
+            raise RuntimeError(f"variable ({self.name}) not writable")
 
         def raiseError():
-            raise RuntimeError("variable (%s) set failure" % self.name)
+            raise RuntimeError(f"variable ({self.name}) set failure")
 
         if self._type == _VarType.BOOL:
             mustbe(bool, 'v', v)
@@ -143,7 +142,7 @@ class Variable:
                 raiseError()
 
         else:
-            raise RuntimeError("Unsupported variable type, name (%s)" % self.name)
+            raise RuntimeError(f"Unsupported variable type, name ({self.name})")
 
     @property
     def valid(self)->bool:
