@@ -7,7 +7,7 @@ __all__ = [
 
     "gsOpenLicense","gsGetLicenseId","gsGetLicenseName","gsGetLicenseDescription","gsGetLicenseStatus","gsIsLicenseValid","gsLockLicense","gsGetLicenseParamCount","gsGetLicenseParamByIndex",
     
-    "gsGetVariable","gsGetVariableName","gsGetVariableType", "gsVariableTypeToString", "gsGetVariableAttr",
+    "gsGetVariable","gsGetVariableName","gsGetVariableType", "gsVariableTypeToString", "gsGetVariableAttr","gsIsVariableValid",
     "gsGetVariableValueAsString","gsSetVariableValueFromString","gsGetVariableValueAsInt","gsSetVariableValueFromInt",
     "gsGetVariableValueAsInt64","gsSetVariableValueFromInt64","gsGetVariableValueAsFloat","gsSetVariableValueFromFloat",
     "gsGetVariableValueAsDouble","gsSetVariableValueFromDouble","gsGetVariableValueAsTime","gsSetVariableValueFromTime"

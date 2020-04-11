@@ -97,6 +97,7 @@ gsGetVariableName = WINFUNCTYPE(LPCSTR, HANDLE)((53, _hCore))
 gsGetVariableType = WINFUNCTYPE(BYTE, HANDLE)((54, _hCore))
 gsVariableTypeToString = WINFUNCTYPE(LPCSTR, BYTE)((55, _hCore))
 gsGetVariableAttr = WINFUNCTYPE(INT, HANDLE)((56, _hCore))
+gsIsVariableValid = WINFUNCTYPE(c_bool, HANDLE)((67, _hCore))
 
 gsGetVariableValueAsString = WINFUNCTYPE(LPCSTR, HANDLE)((57, _hCore))
 gsSetVariableValueFromString = WINFUNCTYPE(c_bool, HANDLE, LPCSTR)((58, _hCore))

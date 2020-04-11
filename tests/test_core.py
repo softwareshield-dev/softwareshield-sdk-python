@@ -129,6 +129,9 @@ class TestCoreAPI(unittest.TestCase):
         print("lic: %s" % lic.name)
         print(lic.params)
 
+        isp = lic.inspector
+        print("ISP: %r" % isp)
+
 
 
 

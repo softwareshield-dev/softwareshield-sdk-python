@@ -48,12 +48,14 @@ class Variable:
         return "(%s) => %s" % (self.name, self.value)
 
     @property
-    def name(self):
+    def name(self)->str:
         return pchar2str(gsGetVariableName(self._handle))
     @property
-    def value(self):
+    def value(self)->any:
         if self._attr & _VarAttr.READ == 0:
             raise RuntimeError("variable (%s) not readable" % self.name)
+        if not self.valid:
+            raise RuntimeError("variable (%s) does not hold a valid value" % self.name)
 
         if self._type == _VarType.BOOL:
             v = ctypes.c_int()
@@ -93,7 +95,7 @@ class Variable:
         raise RuntimeError("Unsupported variable type, name (%s)" % self.name)
 
     @value.setter
-    def value(self, v):
+    def value(self, v: any):
         if self._attr & _VarAttr.WRITE == 0:
             raise RuntimeError("variable (%s) not writable" % self.name)
 
@@ -142,3 +144,13 @@ class Variable:
 
         else:
             raise RuntimeError("Unsupported variable type, name (%s)" % self.name)
+
+    @property
+    def valid(self)->bool:
+        """
+        If the variable holds a valid value?
+
+        some variable might not hold a valid value even the value itself looks valid. for example, if the variable holds a first-access timestamp of
+        an app, its value won't be valid until the app is launched for the first time.
+        """
+        return gsIsVariableValid(self._handle)
