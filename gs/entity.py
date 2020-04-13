@@ -19,7 +19,7 @@ class EntityAttribute(IntFlag):
 class Entity:
     def __init__(self, handle):
         if handle is None:
-            raise ValueError("Invalid entity handle")
+            raise SdkError("Invalid entity handle")
 
         self._handle = handle
 
@@ -64,6 +64,7 @@ class Entity:
     # License
     @property
     def license(self):
+        """ license model attached to this entity """
         return self._lic
 
     def lock(self):
@@ -73,6 +74,7 @@ class Entity:
     # attribute and helpers
     @property
     def attribute(self):
+        """ entity attributes / status """
         return EntityAttribute(gsGetEntityAttributes(self._handle))
 
     @property

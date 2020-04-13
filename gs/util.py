@@ -15,3 +15,6 @@ def str2pchar(v):
 def pchar2str(pstr):
     """ Convert char* to str """
     return str(pstr, 'utf-8')
+
+# the root of all SDK errors
+class SdkError(RuntimeError):pass

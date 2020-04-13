@@ -12,7 +12,7 @@ import logging
 def core_must_inited(f):
     def new_f(*args):
         if not Core._inst._inited:
-            raise Exception("gs.Core must be initialized!")
+            raise SdkError("gs.Core must be initialized!")
         return f(*args)
     return new_f
 
@@ -118,12 +118,12 @@ class Core(object):
 
         msg = f"entity not found, id=({entityId})"
         logging.warning(msg)
-        raise ValueError(msg)
+        raise SdkError(msg)
 
     @core_must_inited
     def getVariable(self, name):
         h = gsGetVariable(str2pchar(name))
         if h is None:
-            raise ValueError(f"variable ({name}) not found")
+            raise SdkError(f"variable ({name}) not found")
 
         return Variable(h)

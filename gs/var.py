@@ -30,7 +30,7 @@ class Variable:
     """
     def __init__(self, handle):
         if handle is None:
-            raise ValueError("variable handle cannot be empty!")
+            raise SdkError("variable handle cannot be empty!")
 
         self._handle = handle
         typ = gsGetVariableType(handle)
@@ -52,9 +52,9 @@ class Variable:
     @property
     def value(self)->any:
         if self._attr & _VarAttr.READ == 0:
-            raise RuntimeError(f"variable ({self.name}) not readable")
+            raise SdkError(f"variable ({self.name}) not readable")
         if not self.valid:
-            raise RuntimeError(f"variable ({self.name}) does not hold a valid value")
+            raise SdkError(f"variable ({self.name}) does not hold a valid value")
 
         if self._type == _VarType.BOOL:
             v = ctypes.c_int()
@@ -91,15 +91,15 @@ class Variable:
             if gsGetVariableValueAsInt64(self._handle, ctypes.byref(v)):
                 return datetime.utcfromtimestamp(v.value)
 
-        raise RuntimeError(f"Unsupported variable type, name ({self.name})")
+        raise SdkError(f"Unsupported variable type, name ({self.name})")
 
     @value.setter
     def value(self, v: any):
         if self._attr & _VarAttr.WRITE == 0:
-            raise RuntimeError(f"variable ({self.name}) not writable")
+            raise SdkError(f"variable ({self.name}) not writable")
 
         def raiseError():
-            raise RuntimeError(f"variable ({self.name}) set failure")
+            raise SdkError(f"variable ({self.name}) set failure")
 
         if self._type == _VarType.BOOL:
             mustbe(bool, 'v', v)
@@ -142,7 +142,7 @@ class Variable:
                 raiseError()
 
         else:
-            raise RuntimeError(f"Unsupported variable type, name ({self.name})")
+            raise SdkError(f"Unsupported variable type, name ({self.name})")
 
     @property
     def valid(self)->bool:
