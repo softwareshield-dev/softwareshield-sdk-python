@@ -116,6 +116,110 @@ class License:
     
 # License Model Inspectors
 
+@inspect(LicenseId.ALWAYS_LOCK)
+class LM_Lock: pass
+
+@inspect(LicenseId.ALWAYS_RUN)
+class LM_Run: pass
+
+
+@inspect(LicenseId.TRIAL_ACCESS)
+class LM_Access:
+    def __init__(self, lic: License):
+        self._lic = lic
+
+    @property
+    def maxTimes(self)->int:
+        # total times allowed to access the entity
+        return self._lic.params['maxAccessTimes'].value
+
+    @property
+    def timesUsed(self)->int:
+        # how many times consumed accessing the entity
+        return self._lic.params['usedTimes'].value
+
+    @property
+    def timesLeft(self)->int:
+        # how many times left to access the entity
+        return self.maxTimes - self.timesUsed
+
+@inspect(LicenseId.TRIAL_DURATION)
+class LM_Duration:
+    def __init__(self, lic: License):
+        self._lic = lic
+
+    @property
+    def duration(self)->int:
+        # how many seconds allowed to access the entity
+        return self._lic.params['maxDurationInSeconds'].value
+
+    @property
+    def secondsPassed(self)->int:
+        # how many seconds accumulated since entity is accessed
+        return self._lic.params['usedDurationInSeconds'].value
+
+    @property
+    def secondsLeft(self)->int:
+        # how many seconds left to access the entity
+        return 0 if self.secondsPassed >= self.duration else self.duration - self.secondsLeft
+
+
+@inspect(LicenseId.TRIAL_HARDDATE)
+class LM_HardDate:
+
+    class Scenario(Enum):
+        VaidBetween = 1 # valid between (tBegin, tEnd)
+        ExpireAfter = 2 # valid until tEnd, tBegin undefined
+        ValidSince  = 3 # valid since tBegin, tEnd undefined
+
+
+    def __init__(self, lic: License):
+        self._lic = lic
+        
+        # three valid scenarios (ref: http://doc.softwareshield.com/UG/license_action.html#expire_by_harddate)
+        if lic.params['timeBeginEnabled'].value:
+            if lic.params['timeEndEnabled'].value:
+                self._scenario = LM_HardDate.Scenario.VaidBetween
+            else:
+                self._scenario = LM_HardDate.Scenario.ValidSince
+        else:
+            if lic.params['timeEndEnabled'].value:
+                self._scenario = LM_HardDate.Scenario.ExpireAfter
+            else:
+                raise ValueError("Invalid license parameters")
+
+    @property
+    def timeBegin(self)->datetime:
+        if self._scenario == LM_HardDate.Scenario.ExpireAfter:
+            raise RuntimeError("timeBegin not defined for scenario 'ExpireAfter'")
+
+        return self._lic.params['timeBegin'].value
+
+    @property
+    def timeEnd(self)->datetime:
+        if self._scenario == LM_HardDate.Scenario.ValidSince:
+            raise RuntimeError("timeEnd not defined for scenario 'ValidSince'")
+
+        return self._lic.params['timeEnd'].value
+
+    @property
+    def secondsLeft(self)->int:
+        """
+         how many seconds left before license is expired (ValidBetween / ExpireAfter)
+         or how many seconds left before license is valid (ValidSince)
+        """
+        t = datetime.utcnow()
+        if self._scenario == LM_HardDate.Scenario.ValidSince:
+            return 0 if t >= self.timeBegin else int((self.timeBegin - t).total_seconds())
+        else:
+            return 0 if t >= self.timeEnd else int((self.timeEnd - t).total_seconds())
+
+
+@inspect(LicenseId.TRIAL_SESSION)
+class LM_Session:
+    def __init__(self, lic: License):
+        self._lic = lic
+
 @inspect(LicenseId.TRIAL_PERIOD)
 class LM_Period:
     """
