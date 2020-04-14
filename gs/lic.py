@@ -3,6 +3,7 @@
 from .intf import *
 from .util import *
 from .var import *
+from .act import ActionId
 
 from enum import IntEnum, Enum
 from datetime import timedelta, datetime
@@ -61,6 +62,15 @@ class License(HObject):
 
         self._inspector = None
 
+        # actions acceptable by this license model
+        n = gsGetActionInfoCount(h)
+        self._act_ids = []
+        for i in range(n):
+            act_id = ctypes.c_byte(0)
+            p = gsGetActionInfoByIndex(h, i, ctypes.byref(act_id))
+            if p:
+                self._act_ids.append(act_id.value)
+
     @property
     def name(self):
         return self._name
@@ -109,6 +119,10 @@ class License(HObject):
         if self._inspector is None:
             self._inspector = _Inspectors[self.id](self)
         return self._inspector
+
+    def acceptAction(self, actId: ActionId)->bool:
+        """ can action be applied to this license model? """
+        return actId in self._act_ids
     
 # License Model Inspectors
 

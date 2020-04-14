@@ -12,7 +12,10 @@ __all__ = [
     "gsGetVariableValueAsInt64","gsSetVariableValueFromInt64","gsGetVariableValueAsFloat","gsSetVariableValueFromFloat",
     "gsGetVariableValueAsDouble","gsSetVariableValueFromDouble","gsGetVariableValueAsTime","gsSetVariableValueFromTime",
 
-    "gsCreateRequest", "gsAddRequestAction", "gsGetRequestCode"
+    "gsCreateRequest", "gsAddRequestAction", "gsGetRequestCode",
+
+    "gsGetActionInfoCount", "gsGetActionInfoByIndex",
+    "gsGetActionName", "gsGetActionDescription", "gsGetActionDescription","gsGetActionParamCount","gsGetActionParamByIndex"
 ]
 
 from .v5 import *

@@ -16,6 +16,9 @@ class Request(HObject):
 
         If target is not specified, then all entities are targetted
         """
+        if target and isinstance(target, Entity) and not target.license.acceptAction(actId):
+            raise SdkError(f"Action (id: {actId}) cannot be accepted by target entity ({target.name})")
+
         hLic = None if target is None else target.license.handle
         hAct = gsAddRequestAction(self._handle, actId, hLic)
         if hAct is None:

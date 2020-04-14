@@ -136,6 +136,9 @@ class TestCoreAPI(unittest.TestCase):
         req = gs.Core().createRequest()
         act = req.addAction(gs.ActionId.ACT_UNLOCK)
         self.assertEqual(act.id, gs.ActionId.ACT_UNLOCK)
+        with self.assertRaises(gs.SdkError):
+            req.addAction(gs.ActionId.ACT_ADD_ACCESSTIME, gs.Core().entities[0])
+            
         print(req.code)
 
 

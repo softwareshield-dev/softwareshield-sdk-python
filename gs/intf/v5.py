@@ -122,3 +122,13 @@ gsCreateRequest = WINFUNCTYPE(HANDLE)((36, _hCore))
 gsAddRequestAction = WINFUNCTYPE(HANDLE, HANDLE, BYTE, HANDLE)((37, _hCore))
 gsGetRequestCode = WINFUNCTYPE(LPCSTR, HANDLE)((45, _hCore))
 
+# action
+gsGetActionInfoCount = WINFUNCTYPE(INT, HANDLE)((32, _hCore))
+gsGetActionInfoByIndex = WINFUNCTYPE(LPCSTR, HANDLE, INT, POINTER(ctypes.c_byte))((33, _hCore))
+
+gsGetActionName = WINFUNCTYPE(LPCSTR, HANDLE)((38, _hCore))
+gsGetActionDescription = WINFUNCTYPE(LPCSTR, HANDLE)((40, _hCore))
+gsGetActionString = WINFUNCTYPE(LPCSTR, HANDLE)((41, _hCore))
+
+gsGetActionParamCount = WINFUNCTYPE(INT, HANDLE)((42, _hCore))
+gsGetActionParamByIndex = WINFUNCTYPE(HANDLE, HANDLE, INT)((44, _hCore))
