@@ -117,4 +117,8 @@ gsSetVariableValueFromDouble = WINFUNCTYPE(c_bool, HANDLE, ctypes.c_double)((79,
 gsGetVariableValueAsTime = WINFUNCTYPE(c_bool, HANDLE, POINTER(ctypes.c_uint64))((68, _hCore))
 gsSetVariableValueFromTime = WINFUNCTYPE(c_bool, HANDLE, ctypes.c_uint64)((69, _hCore))
 
+# Request
+gsCreateRequest = WINFUNCTYPE(HANDLE)((36, _hCore))
+gsAddRequestAction = WINFUNCTYPE(HANDLE, HANDLE, BYTE, HANDLE)((37, _hCore))
+gsGetRequestCode = WINFUNCTYPE(LPCSTR, HANDLE)((45, _hCore))
 

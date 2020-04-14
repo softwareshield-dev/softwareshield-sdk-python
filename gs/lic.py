@@ -42,29 +42,24 @@ class inspect:
 
 
 
-class License:
+class License(HObject):
     def __init__(self, entity):
         self._entity = entity
 
-        self._handle = gsOpenLicense(entity.handle)
-        if not self._handle:
+        h = gsOpenLicense(entity.handle)
+        if not h:
             raise SdkError(f"entity ({entity.name}) has no license attached")
 
-        self._name = pchar2str(gsGetLicenseName(self._handle))
-        self._id = LicenseId(pchar2str(gsGetLicenseId(self._handle)))
-        self._description = pchar2str(gsGetLicenseDescription(self._handle))
+        super().__init__(h)
+
+        self._name = pchar2str(gsGetLicenseName(h))
+        self._id = LicenseId(pchar2str(gsGetLicenseId(h)))
+        self._description = pchar2str(gsGetLicenseDescription(h))
 
         # params
         self._params = None # late-binding
 
         self._inspector = None
-
-    def __del__(self):
-        gsCloseHandle(self._handle)
-    
-    @property
-    def handle(self):
-        return self._handle
 
     @property
     def name(self):

@@ -24,24 +24,19 @@ class _VarType(IntEnum):
     TIME = 30   # datetime
 
 
-class Variable:
+class Variable(HObject):
     """
     User defined variable (UDV)
     """
     def __init__(self, handle):
-        if handle is None:
-            raise SdkError("variable handle cannot be empty!")
+        super().__init__(handle)
 
-        self._handle = handle
         typ = gsGetVariableType(handle)
         typstr = pchar2str(gsVariableTypeToString(typ))
         logging.debug(f"typename: ({typstr})")
 
         self._type = _VarType(gsGetVariableType(handle))
         self._attr = _VarAttr(gsGetVariableAttr(handle))
-    
-    def __del__(self):
-        gsCloseHandle(self._handle)
     
     def __repr__(self):
         return f"{self.name} => {self.value}"

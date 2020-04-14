@@ -67,7 +67,7 @@ class TestCoreAPI(unittest.TestCase):
 
         self.assertEqual(e0, gs.Core().getEntityById(eid0))
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(gs.SdkError):
             gs.Core().getEntityById("x1")
         
         # not being accessed
@@ -89,7 +89,7 @@ class TestCoreAPI(unittest.TestCase):
     def test_var(self):
         ''' test variable '''
         core = gs.Core()
-        with self.assertRaises(ValueError):
+        with self.assertRaises(gs.SdkError):
             core.getVariable("level")
 
         age = core.getVariable("age")
@@ -131,6 +131,12 @@ class TestCoreAPI(unittest.TestCase):
 
         isp = lic.inspector
         print("ISP: %r" % isp)
+
+    def test_action(self):
+        req = gs.Core().createRequest()
+        act = req.addAction(gs.ActionId.ACT_UNLOCK)
+        self.assertEqual(act.id, gs.ActionId.ACT_UNLOCK)
+        print(req.code)
 
 
 

@@ -4,6 +4,7 @@ from .intf import *
 from .util import *
 from .entity import *
 from .var import Variable
+from .req import *
 
 import os
 import logging
@@ -127,3 +128,11 @@ class Core(object):
             raise SdkError(f"variable ({name}) not found")
 
         return Variable(h)
+
+    @core_must_inited
+    def createRequest(self):
+        """
+        Create a request object
+        """
+        return Request(gsCreateRequest())
+
