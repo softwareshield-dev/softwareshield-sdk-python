@@ -86,14 +86,12 @@ class Action(HObject):
         return self._params
 
 
+#----------- Generic Actions ----------------------
 @act_id(ActionId.ACT_UNLOCK)
 class Act_Unlock(Action): pass    
 
 @act_id(ActionId.ACT_LOCK)
 class Act_Lock(Action): pass    
-
-@act_id(ActionId.ACT_RESET_ALLEXPIRATION)
-class Act_ResetAllExpiration(Action): pass    
 
 @act_id(ActionId.ACT_CLEAN)
 class Act_Clean(Action): pass    
@@ -103,6 +101,10 @@ class Act_Dummy(Action): pass
 
 @act_id(ActionId.ACT_FIX)
 class Act_Fix(Action): pass    
+
+#----------- Trial License Actions ----------------------
+@act_id(ActionId.ACT_RESET_ALLEXPIRATION)
+class Act_ResetAllExpiration(Action): pass    
 
 @act_id(ActionId.ACT_ADD_ACCESSTIME)
 class Act_AddAccessTime(Action): pass    

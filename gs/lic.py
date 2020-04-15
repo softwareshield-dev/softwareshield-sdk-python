@@ -125,19 +125,27 @@ class License(HObject):
         return actId in self._act_ids
     
 # License Model Inspectors
-
-@inspect(LicenseId.ALWAYS_LOCK)
-class LM_Lock: pass
-
-@inspect(LicenseId.ALWAYS_RUN)
-class LM_Run: pass
-
-
-@inspect(LicenseId.TRIAL_ACCESS)
-class LM_Access:
+class Inspector:
     def __init__(self, lic: License):
         self._lic = lic
 
+
+@inspect(LicenseId.ALWAYS_LOCK)
+class LM_Lock(Inspector): pass
+
+@inspect(LicenseId.ALWAYS_RUN)
+class LM_Run(Inspector): pass
+
+
+class TrialInspector(Inspector):
+    @property
+    def exitAppOnExpired(self)->bool:
+        """ app will be terminated once license becomes expired by sdk core """
+        return self._lic.params['exitAppOnExpire'].value
+
+
+@inspect(LicenseId.TRIAL_ACCESS)
+class LM_Access(TrialInspector):
     @property
     def maxTimes(self)->int:
         """ total times allowed to access the entity """
@@ -154,7 +162,7 @@ class LM_Access:
         return self.maxTimes - self.timesUsed
 
 @inspect(LicenseId.TRIAL_DURATION)
-class LM_Duration:
+class LM_Duration(TrialInspector):
     def __init__(self, lic: License):
         self._lic = lic
 
@@ -175,7 +183,7 @@ class LM_Duration:
 
 
 @inspect(LicenseId.TRIAL_HARDDATE)
-class LM_HardDate:
+class LM_HardDate(TrialInspector):
 
     class Scenario(Enum):
         VaidBetween = 1 # valid between (tBegin, tEnd)
@@ -237,7 +245,7 @@ class LM_HardDate:
 
 
 @inspect(LicenseId.TRIAL_SESSION)
-class LM_Session:
+class LM_Session(TrialInspector):
     def __init__(self, lic: License):
         self._lic = lic
     @property
@@ -259,7 +267,7 @@ class LM_Session:
     
 
 @inspect(LicenseId.TRIAL_PERIOD)
-class LM_Period:
+class LM_Period(TrialInspector):
     """
     Trial By Period license inspector
     """
@@ -270,6 +278,7 @@ class LM_Period:
         if self.used:
             return f'''
                 used: {self.used} \n
+                exitAppOnExpired: {self.exitAppOnExpired} \n
                 expirePeriodInSeconds: {self.expirePeriodInSeconds} \n
                 secondsLeft: {self.secondsLeft} \n
                 secondsPassed: {self.secondsPassed} \n
