@@ -1,7 +1,7 @@
 import unittest
 import gs
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def getPathToTestCaseLicense(prj):
@@ -132,7 +132,7 @@ class TestCoreAPI(unittest.TestCase):
         isp = lic.inspector
         print("ISP: %r" % isp)
 
-    def test_action(self):
+    def test_action0(self):
         req = gs.Core().createRequest()
         act = req.addAction(gs.ActionId.ACT_UNLOCK)
         self.assertEqual(act.id, gs.ActionId.ACT_UNLOCK)
@@ -142,6 +142,154 @@ class TestCoreAPI(unittest.TestCase):
         print(req.code)
 
 
+    def test_action1(self):
+        req = gs.Core().createRequest()
+        print('\n', '*'*30)
+        for actId in gs.ActionId:
+            act = req.addAction(actId)
+            print(act, '\n')
+            self.assertEqual(act.id, actId)
+            
+        print('\n', '*'*30)
 
+
+    def test_action_clean(self):
+        req = gs.Core().createRequest()
+        print('\n', '*'*30)
+        act = req.addAction(gs.ActionId.ACT_CLEAN)
+        self.assertFalse(act.hasExpireDate)
+
+        act.expireDate = datetime.now() + timedelta(days = 10)
+        print(act, '\n')
+        print(f"code={req.code}")
+            
+        print('\n', '*'*30)
+
+    def test_action_addAccessTime(self):
+        req = gs.Core().createRequest()
+        print('\n', '*'*30)
+        
+        act = req.addAction(gs.ActionId.ACT_ADD_ACCESSTIME)
+        act.addedTimes = 10
+
+        self.assertEqual(act.addedTimes, 10)
+
+        print(act, '\n')
+        print(f"code={req.code}")
+            
+        print('\n', '*'*30)
+
+    def test_action_setAccessTime(self):
+        req = gs.Core().createRequest()
+        print('\n', '*'*30)
+        
+        act = req.addAction(gs.ActionId.ACT_SET_ACCESSTIME)
+        act.times = 10
+
+        self.assertEqual(act.times, 10)
+
+        print(act, '\n')
+        print(f"code={req.code}")
+            
+        print('\n', '*'*30)
+
+
+    def test_action_setStartDate(self):
+        req = gs.Core().createRequest()
+        print('\n', '*'*30)
+        
+        act = req.addAction(gs.ActionId.ACT_SET_STARTDATE)
+        self.assertFalse(act.hasStartDate)
+
+        dt = datetime(2020, 6,1)
+        act.startDate = dt
+        self.assertEqual(act.startDate, dt)
+
+        print(act, '\n')
+        print(f"code={req.code}")
+            
+        print('\n', '*'*30)
+
+
+    def test_action_setEndDate(self):
+        req = gs.Core().createRequest()
+        print('\n', '*'*30)
+        
+        act = req.addAction(gs.ActionId.ACT_SET_ENDDATE)
+        self.assertFalse(act.hasEndDate)
+
+        dt = datetime(2021, 6,1)
+        act.endDate = dt
+        self.assertEqual(act.endDate, dt)
+
+        print(act, '\n')
+        print(f"code={req.code}")
+            
+        print('\n', '*'*30)
+
+    def test_action_setSessionTime(self):
+        req = gs.Core().createRequest()
+        print('\n', '*'*30)
+        
+        act = req.addAction(gs.ActionId.ACT_SET_SESSIONTIME)
+        act.sessionTime = 100
+        self.assertEqual(act.sessionTime, 100)
+
+        print(act, '\n')
+        print(f"code={req.code}")
+            
+        print('\n', '*'*30)
+
+    def test_action_setPeriod(self):
+        req = gs.Core().createRequest()
+        print('\n', '*'*30)
+        
+        act = req.addAction(gs.ActionId.ACT_SET_EXPIRE_PERIOD)
+        act.period = 1000
+        self.assertEqual(act.period, 1000)
+
+        print(act, '\n')
+        print(f"code={req.code}")
+            
+        print('\n', '*'*30)
+
+    def test_action_addPeriod(self):
+        req = gs.Core().createRequest()
+        print('\n', '*'*30)
+        
+        act = req.addAction(gs.ActionId.ACT_ADD_EXPIRE_PERIOD)
+        act.addedPeriod = 200
+        self.assertEqual(act.addedPeriod, 200)
+
+        print(act, '\n')
+        print(f"code={req.code}")
+            
+        print('\n', '*'*30)
+
+    def test_action_setDuration(self):
+        req = gs.Core().createRequest()
+        print('\n', '*'*30)
+        
+        act = req.addAction(gs.ActionId.ACT_SET_EXPIRE_DURATION)
+        act.duration = 1000
+        self.assertEqual(act.duration, 1000)
+
+        print(act, '\n')
+        print(f"code={req.code}")
+            
+        print('\n', '*'*30)
+
+    def test_action_addDuration(self):
+        req = gs.Core().createRequest()
+        print('\n', '*'*30)
+        
+        act = req.addAction(gs.ActionId.ACT_ADD_EXPIRE_DURATION)
+        act.addedDuration = 250
+        self.assertEqual(act.addedDuration, 250)
+
+        print(act, '\n')
+        print(f"code={req.code}")
+            
+        print('\n', '*'*30)
 
 

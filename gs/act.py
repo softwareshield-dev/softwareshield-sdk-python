@@ -9,6 +9,7 @@ from enum import IntEnum
 from .util import *
 from .intf import *
 from .var import Variable
+from datetime import datetime
 
 class ActionId(IntEnum):
     """ unique action id """
@@ -60,6 +61,10 @@ class Action(HObject):
     def __init__(self, handle):
         super().__init__(handle)
         self._params = None # later param binding
+
+    def __repr__(self):
+        return '\n'.join([f"{type(self).__name__}({self.id}): {self.name}", *[f"{self.params[x]}" for x in self.params]])
+
     
     @staticmethod
     def create(actId: ActionId, handle):
@@ -94,7 +99,21 @@ class Act_Unlock(Action): pass
 class Act_Lock(Action): pass    
 
 @act_id(ActionId.ACT_CLEAN)
-class Act_Clean(Action): pass    
+class Act_Clean(Action):
+    @property
+    def hasExpireDate(self)->bool:
+        """ does action has expire date? """
+        return self.params['endDate'].valid
+
+    @property
+    def expireDate(self)->datetime:
+        """ expire date of this action """
+        return self.params['endDate'].value
+
+    @expireDate.setter
+    def expireDate(self, dt: datetime):
+        """ setup expire date """
+        self.params['endDate'].value = dt
 
 @act_id(ActionId.ACT_DUMMY)
 class Act_Dummy(Action): pass    
@@ -107,28 +126,125 @@ class Act_Fix(Action): pass
 class Act_ResetAllExpiration(Action): pass    
 
 @act_id(ActionId.ACT_ADD_ACCESSTIME)
-class Act_AddAccessTime(Action): pass    
+class Act_AddAccessTime(Action):
+    @property
+    def addedTimes(self)->int:
+        """how many times to add """
+        return self.params['addedAccessTime'].value
+
+    @addedTimes.setter
+    def addedTimes(self, v:int):
+        """ setup how many times to add """
+        self.params['addedAccessTime'].value = v 
+
 
 @act_id(ActionId.ACT_SET_ACCESSTIME)
-class Act_SetAccessTime(Action): pass    
+class Act_SetAccessTime(Action):
+    @property
+    def times(self)->int:
+        """how many times to set """
+        return self.params['newAccessTime'].value
+
+    @times.setter
+    def times(self, v:int):
+        """ setup how many times to access """
+        self.params['newAccessTime'].value = v 
+
 
 @act_id(ActionId.ACT_SET_STARTDATE)
-class Act_SetStartDate(Action): pass    
+class Act_SetStartDate(Action): 
+    @property
+    def hasStartDate(self)->bool:
+        """ does action has start date specified? """
+        return self.params['startDate'].valid
+    @property
+    def startDate(self)->datetime:
+        """ When the license becomes valid? 
+            Only available for scenerio 'ValidBetween' and 'ValidSince'
+        """
+        return self.params['startDate'].value
+
+    @startDate.setter
+    def startDate(self, v:datetime):
+        """ setup the start point license will be valid"""
+        self.params['startDate'].value = v 
+
 
 @act_id(ActionId.ACT_SET_ENDDATE)
-class Act_SetEndDate(Action): pass    
+class Act_SetEndDate(Action):
+    @property
+    def hasEndDate(self)->bool:
+        """ does action has ending date specified? """
+        return self.params['endDate'].valid
+
+    @property
+    def endDate(self)->datetime:
+        """ when the license will be expired? (alias of property 'expireDate')
+            Only available for scenerio 'ValidBetween' and 'ExpireAfter'
+        """
+        return self.params['endDate'].value
+
+    @endDate.setter
+    def endDate(self, v:datetime):
+        """ setup the time when the license will be expired"""
+        self.params['endDate'].value = v 
 
 @act_id(ActionId.ACT_SET_SESSIONTIME)
-class Act_SetSessionTime(Action): pass    
+class Act_SetSessionTime(Action):
+    @property
+    def sessionTime(self)->int:
+        """ return new session time in seconds """
+        return self.params['newSessionTime'].value
+    
+    @sessionTime.setter
+    def sessionTime(self, v:int):
+        """ sets new session time in seconds """
+        self.params['newSessionTime'].value = v
 
 @act_id(ActionId.ACT_SET_EXPIRE_PERIOD)
-class Act_SetPeriod(Action): pass    
+class Act_SetPeriod(Action):
+    @property
+    def period(self)->int:
+        """ return new period in seconds """
+        return self.params['newPeriodInSeconds'].value
+
+    @period.setter
+    def period(self, v:int):
+        """ sets new period in seconds """
+        self.params['newPeriodInSeconds'].value = v
 
 @act_id(ActionId.ACT_ADD_EXPIRE_PERIOD)
-class Act_AddPeriod(Action): pass    
+class Act_AddPeriod(Action):    
+    @property
+    def addedPeriod(self)->int:
+        """ return added period in seconds """
+        return self.params['addedPeriodInSeconds'].value
+        
+    @addedPeriod.setter
+    def addedPeriod(self, v:int):
+        """ set added period in seconds """
+        self.params['addedPeriodInSeconds'].value = v
 
 @act_id(ActionId.ACT_SET_EXPIRE_DURATION)
-class Act_SetDuration(Action): pass    
+class Act_SetDuration(Action):  
+    @property
+    def duration(self)->int:
+        """ return new duration in seconds """
+        return self.params['duration'].value
+        
+    @duration.setter
+    def duration(self, v:int):
+        """ sets new duration in seconds """
+        self.params['duration'].value = v
 
 @act_id(ActionId.ACT_ADD_EXPIRE_DURATION)
-class Act_AddDuration(Action): pass    
+class Act_AddDuration(Action):
+    @property
+    def addedDuration(self)->int:
+        """ return added duration in seconds """
+        return self.params['addedDuration'].value
+        
+    @addedDuration.setter
+    def addedDuration(self, v:int):
+        """ set added duration in seconds """
+        self.params['addedDuration'].value = v

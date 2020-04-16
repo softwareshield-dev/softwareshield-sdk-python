@@ -39,7 +39,8 @@ class Variable(HObject):
         self._attr = _VarAttr(gsGetVariableAttr(handle))
     
     def __repr__(self):
-        return f"{self.name} => {self.value}"
+        vstr = "N/A" if not self.valid else self.value
+        return f"{self.name} => {vstr}"
 
     @property
     def name(self)->str:
