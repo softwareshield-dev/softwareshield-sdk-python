@@ -15,7 +15,9 @@ __all__ = [
     "gsCreateRequest", "gsAddRequestAction", "gsGetRequestCode",
 
     "gsGetActionInfoCount", "gsGetActionInfoByIndex",
-    "gsGetActionName", "gsGetActionDescription", "gsGetActionDescription","gsGetActionParamCount","gsGetActionParamByIndex"
+    "gsGetActionName", "gsGetActionDescription", "gsGetActionDescription","gsGetActionParamCount","gsGetActionParamByIndex",
+
+    "gsIsServerAlive", "gsApplySN", "gsIsSNValid"
 ]
 
 from .v5 import *

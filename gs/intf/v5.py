@@ -132,3 +132,8 @@ gsGetActionString = WINFUNCTYPE(LPCSTR, HANDLE)((41, _hCore))
 
 gsGetActionParamCount = WINFUNCTYPE(INT, HANDLE)((42, _hCore))
 gsGetActionParamByIndex = WINFUNCTYPE(HANDLE, HANDLE, INT)((44, _hCore))
+
+# online activation
+gsIsServerAlive = WINFUNCTYPE(c_bool, INT)((131, _hCore))
+gsApplySN = WINFUNCTYPE(c_bool, LPCSTR, POINTER(ctypes.c_int), POINTER(ctypes.c_char_p), INT)((133, _hCore))
+gsIsSNValid = WINFUNCTYPE(c_bool, LPCSTR, INT)((139, _hCore))

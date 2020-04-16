@@ -293,3 +293,18 @@ class TestCoreAPI(unittest.TestCase):
         print('\n', '*'*30)
 
 
+    def test_online_activation(self):
+        core = gs.Core()
+        
+        if core.isServerAlive():
+            print("license server is online")
+
+            sn = 'xxx-yyy-zzz'
+            self.assertFalse(core.isValidSN(sn))
+
+            self.assertTrue(core.isValidSN('0875-BB91-4449-9DCE'))
+
+            self.assertTrue(core.applySN('0BD3-4F5C-4EB4-9EE9'))
+
+        else:
+            print("license server is offline")

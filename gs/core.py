@@ -136,3 +136,22 @@ class Core(object):
         """
         return Request(gsCreateRequest())
 
+    #----- Online Activation ----
+    def isServerAlive(self, timeout:int = -1)->bool:
+        """ test if license server is alive """
+        return gsIsServerAlive(timeout)
+
+    def isValidSN(self, serial:str, timeout:int = -1)->bool:
+        """ test if the serial number is a valid one """
+        return gsIsSNValid(str2pchar(serial), timeout)
+
+    def applySN(self, serial:str, timeout:int = -1)->bool:
+        """ apply serial """
+        rc = ctypes.c_int(0)
+        ok = gsApplySN(str2pchar(serial), ctypes.byref(rc), None, timeout)
+        
+        print(f"applySN: rc: ({rc}) ok: {ok}")
+        logging.debug(f"applySN: rc: ({rc}) ok: {ok}")
+
+        return ok
+
