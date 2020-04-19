@@ -137,3 +137,6 @@ gsGetActionParamByIndex = WINFUNCTYPE(HANDLE, HANDLE, INT)((44, _hCore))
 gsIsServerAlive = WINFUNCTYPE(c_bool, INT)((131, _hCore))
 gsApplySN = WINFUNCTYPE(c_bool, LPCSTR, POINTER(ctypes.c_int), POINTER(ctypes.c_char_p), INT)((133, _hCore))
 gsIsSNValid = WINFUNCTYPE(c_bool, LPCSTR, INT)((139, _hCore))
+
+# offline activation
+gsApplyLicenseCodeEx = WINFUNCTYPE(c_bool, LPCSTR, LPCSTR, LPCSTR)((158, _hCore))

@@ -308,3 +308,9 @@ class TestCoreAPI(unittest.TestCase):
 
         else:
             print("license server is offline")
+
+    def test_offline_activation(self):
+        core = gs.Core()
+        code = 'TUVP-C9NM-PRRO-GH33-5KC3'
+        sn = '0BD3-4F5C-4EB4-9EE9'
+        self.assertTrue(core.applyLicenseCode(code, sn))

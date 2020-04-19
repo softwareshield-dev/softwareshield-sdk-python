@@ -17,7 +17,7 @@ __all__ = [
     "gsGetActionInfoCount", "gsGetActionInfoByIndex",
     "gsGetActionName", "gsGetActionDescription", "gsGetActionDescription","gsGetActionParamCount","gsGetActionParamByIndex",
 
-    "gsIsServerAlive", "gsApplySN", "gsIsSNValid"
+    "gsIsServerAlive", "gsApplySN", "gsIsSNValid","gsApplyLicenseCodeEx"
 ]
 
 from .v5 import *

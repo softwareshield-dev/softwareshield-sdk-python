@@ -154,4 +154,8 @@ class Core(object):
         logging.debug(f"applySN: rc: ({rc}) ok: {ok}")
 
         return ok
+    
+    def applyLicenseCode(self, code:str, serial:str)->bool:
+        """ apply a license code from vendor """
+        return gsApplyLicenseCodeEx(str2pchar(code), str2pchar(serial), None)
 
