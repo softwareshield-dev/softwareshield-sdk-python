@@ -314,3 +314,30 @@ class TestCoreAPI(unittest.TestCase):
         code = 'TUVP-C9NM-PRRO-GH33-5KC3'
         sn = '0BD3-4F5C-4EB4-9EE9'
         self.assertTrue(core.applyLicenseCode(code, sn))
+
+    def test_unlock(self):
+        core = gs.Core()
+        code = core.entities[0].license.unlockRequestCode
+        print(f"e0.lic.unlockReqCode: {code}")
+        print(f"core.unlockReqCode: {core.unlockRequestCode}")
+        print(f"core.cleanReqCode: {core.cleanRequestCode}")
+        print(f"core.fixReqCode: {core.fixRequestCode}")
+
+    def test_allEntityStatus(self):
+        """ clean action must be applied before this test starts! """
+        print("\n\nplease make sure clean the license before testing!\n")
+        core = gs.Core()
+
+        self.assertFalse(core.isAllEntitiesLocked())
+        self.assertFalse(core.isAllEntitiesUnlocked())
+
+        # lock it!
+        print("Lock it...\n")
+        core.lockAllEntities()
+        self.assertTrue(core.isAllEntitiesLocked())
+
+        print("Unlock it...\n")
+        code = 'TUVP-C9NM-PRRO-GH33-5KC3'
+        sn = '0BD3-4F5C-4EB4-9EE9'
+        self.assertTrue(core.applyLicenseCode(code, sn))
+        self.assertTrue(core.isAllEntitiesUnlocked())

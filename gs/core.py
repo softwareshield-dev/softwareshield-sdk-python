@@ -129,13 +129,6 @@ class Core(object):
 
         return Variable(h)
 
-    @core_must_inited
-    def createRequest(self):
-        """
-        Create a request object
-        """
-        return Request(gsCreateRequest())
-
     #----- Online Activation ----
     def isServerAlive(self, timeout:int = -1)->bool:
         """ test if license server is alive """
@@ -155,7 +148,54 @@ class Core(object):
 
         return ok
     
+    # ----- Offline Activation ------
+    @core_must_inited
+    def createRequest(self):
+        """
+        Create a request object
+        """
+        return Request(gsCreateRequest())
+
     def applyLicenseCode(self, code:str, serial:str)->bool:
         """ apply a license code from vendor """
         return gsApplyLicenseCodeEx(str2pchar(code), str2pchar(serial), None)
+
+    @property 
+    def unlockRequestCode(self)->str:
+        """ request code to unlock all entities (the whole app) """
+        req = self.createRequest()
+        req.addAction(ActionId.ACT_UNLOCK)
+        return req.code
+
+    @property 
+    def cleanRequestCode(self)->str:
+        """ request code to clean up local license storage """
+        req = self.createRequest()
+        req.addAction(ActionId.ACT_CLEAN)
+        return req.code
+
+    @property 
+    def fixRequestCode(self)->str:
+        """ request code to fix license error """
+        req = self.createRequest()
+        req.addAction(ActionId.ACT_FIX)
+        return req.code
+
+    # license management
+
+    def lockAllEntities(self):
+        """ lock down all entities so the app cannot run until unlocked later """
+        for e in self.entities:
+            e.lock()
+
+    def isAllEntitiesLocked(self)->bool:
+        """ Are all entities already locked down? """
+        return all((e.locked for e in self.entities))
+
+    def isAllEntitiesUnlocked(self)->bool:
+        """ Are all entities already unlocked (full purchased)? """
+        return all((e.unlocked for e in self.entities))
+
+
+
 

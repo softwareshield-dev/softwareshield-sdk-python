@@ -123,6 +123,15 @@ class License(HObject):
     def acceptAction(self, actId: ActionId)->bool:
         """ can action be applied to this license model? """
         return actId in self._act_ids
+
+    @property
+    def unlockRequestCode(self)->str:
+        """ the request code to unlock this license only """
+        from .core import Core
+        req = Core().createRequest()
+        req.addAction(ActionId.ACT_UNLOCK, self.entity)
+        return req.code
+
     
 # License Model Inspectors
 class Inspector:
