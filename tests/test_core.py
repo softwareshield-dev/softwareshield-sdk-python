@@ -94,7 +94,7 @@ class TestCoreAPI(unittest.TestCase):
 
         age = core.getVariable("age")
         self.assertEqual(age.name, "age")
-        self.assertEqual(age.value, 200)
+        self.assertEqual(age.value, 10)
 
         nm = core.getVariable("name")
         self.assertEqual(nm.name, "name")

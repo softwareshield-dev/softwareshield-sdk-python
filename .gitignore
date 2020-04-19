@@ -6,5 +6,12 @@
 
 **/__pycache__/
 
+# ref langs
+lang/
+
+# gtags
+GPATH
+GRTAGS
+GTAGS
 #pyenv
 .python-version
