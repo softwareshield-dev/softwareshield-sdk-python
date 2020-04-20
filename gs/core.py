@@ -38,6 +38,9 @@ class Core(object):
         self._inited = False # not initialized yet
         self._entities = None # entity list
 
+        from .monitor import initMonitor
+        initMonitor() # setup sdk monitor
+
     @staticmethod
     def getVersion():
         '''get SDK version'''

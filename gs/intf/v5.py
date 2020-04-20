@@ -4,7 +4,7 @@ import ctypes
 
 from ctypes import cdll, windll, WINFUNCTYPE
 from ctypes.wintypes import LPCSTR, HANDLE, HMODULE, LPVOID, INT, DWORD, UINT, BOOL, BYTE
-from ctypes import c_bool, POINTER
+from ctypes import c_bool, POINTER, py_object
 
 import os
 
@@ -140,3 +140,10 @@ gsIsSNValid = WINFUNCTYPE(c_bool, LPCSTR, INT)((139, _hCore))
 
 # offline activation
 gsApplyLicenseCodeEx = WINFUNCTYPE(c_bool, LPCSTR, LPCSTR, LPCSTR)((158, _hCore))
+
+# callbacks
+# gs5_monitor_callback = procedure(evtId: Integer; hEvent: TEventHandle; usrData: Pointer); stdcall;
+gs5_monitor_callback = WINFUNCTYPE(None, INT, HANDLE, LPVOID)
+
+# function gsCreateMonitorEx(cbMonitor: gs5_monitor_callback; usrData: Pointer; const monitorName: PAnsiChar): TMonitorHandle; stdcall;
+gsCreateMonitorEx = WINFUNCTYPE(HANDLE, LPVOID, LPVOID, LPCSTR)((90, _hCore))
