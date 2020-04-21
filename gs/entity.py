@@ -2,9 +2,9 @@
 Entity
 """
 
-from .intf import *
-from .util import *
-from .lic import *
+from . import intf as _intf
+from .util import once, pchar2str, HObject
+from .lic import License
 from enum import IntFlag
 
 
@@ -23,16 +23,19 @@ class Entity(HObject):
         self._lic = License(self)
 
     @property
+    @once
     def name(self):
-        return pchar2str(gsGetEntityName(self._handle))
+        return pchar2str(_intf.gsGetEntityName(self._handle))
         
     @property
+    @once
     def id(self):
-        return pchar2str(gsGetEntityId(self._handle))
+        return pchar2str(_intf.gsGetEntityId(self._handle))
     
     @property
+    @once
     def description(self):
-        return pchar2str(gsGetEntityDescription(self._handle))
+        return pchar2str(_intf.gsGetEntityDescription(self._handle))
 
     def beginAccess(self):
         """
@@ -42,13 +45,13 @@ class Entity(HObject):
 
         This api can be called recursively, and each call must be paired with an endAccess().
         """
-        return gsBeginAccessEntity(self._handle)
+        return _intf.gsBeginAccessEntity(self._handle)
         
     def endAccess(self):
         """
         Try end accessing an entity
         """
-        return gsEndAccessEntity(self._handle)
+        return _intf.gsEndAccessEntity(self._handle)
 
     # License
     @property
@@ -64,7 +67,7 @@ class Entity(HObject):
     @property
     def attribute(self):
         """ entity attributes / status """
-        return EntityAttribute(gsGetEntityAttributes(self._handle))
+        return EntityAttribute(_intf.gsGetEntityAttributes(self._handle))
 
     @property
     def accessible(self):

@@ -6,8 +6,8 @@ To change license status, apply actions
 
 from enum import IntEnum
 
-from .util import *
-from .intf import *
+from .util import pchar2str, once, HObject, SdkError
+from . import intf as _intf
 from .var import Variable
 from datetime import datetime
 
@@ -58,9 +58,10 @@ class act_id:
 
 
 class Action(HObject):
+    _id = None
+
     def __init__(self, handle):
         super().__init__(handle)
-        self._params = None # later param binding
 
     def __repr__(self):
         return '\n'.join([f"{type(self).__name__}({self.id}): {self.name}", *[f"{self.params[x]}" for x in self.params]])
@@ -76,19 +77,21 @@ class Action(HObject):
     @property
     def id(self)->ActionId:
         """ unique action id """
+        if self._id is None:
+            raise SdkError("action id not specified, please use decorator 'act_id()'")
         return self._id
     
     @property
+    @once
     def name(self):
         """ action name """
-        return pchar2str(gsGetActionName(self._handle))
+        return pchar2str(_intf.gsGetActionName(self._handle))
 
     @property
+    @once
     def params(self):
         """ action parameters """
-        if self._params is None:
-            self._params = { x.name: x for x in [ Variable(gsGetActionParamByIndex(self._handle, i)) for i in range(gsGetActionParamCount(self._handle)) ] }
-        return self._params
+        return { x.name: x for x in [ Variable(_intf.gsGetActionParamByIndex(self._handle, i)) for i in range(_intf.gsGetActionParamCount(self._handle)) ] }
 
 
 #----------- Generic Actions ----------------------

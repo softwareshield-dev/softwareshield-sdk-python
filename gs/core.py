@@ -1,16 +1,18 @@
 """SoftwareShield core api"""
 
-from .intf import *
-from .util import *
-from .entity import *
+from . import intf as _intf
+from .util import SdkError, once, one_call, mustbe, pchar2str, str2pchar
+from .entity import Entity
 from .var import Variable
-from .req import *
+from .req import Request
+from .act import ActionId
 
 import os
 import logging
+import ctypes
 
-# decorator to enforce the gs.Core must be initialized before api can be called.
 def core_must_inited(f):
+    """ decorator to enforce the gs.Core must be initialized before api can be called. """
     def new_f(*args):
         if not Core._inst._inited:
             raise SdkError("gs.Core must be initialized!")
@@ -42,9 +44,10 @@ class Core(object):
         initMonitor() # setup sdk monitor
 
     @staticmethod
+    @one_call
     def getVersion():
         '''get SDK version'''
-        return pchar2str(gsGetVersion())
+        return pchar2str(_intf.gsGetVersion())
 
     def init(self, productId, pathToLic, password):
         """
@@ -60,7 +63,7 @@ class Core(object):
                 pathToLic = os.path.abspath(pathToLic)
                 logging.info(f"license path ({pathToLic})")
 
-            self._rc = gsInit(str2pchar(productId), str2pchar(pathToLic), str2pchar(password),None)
+            self._rc = _intf.gsInit(str2pchar(productId), str2pchar(pathToLic), str2pchar(password),None)
             self._inited = True
             logging.debug(f"rc: {self._rc}")
         else:
@@ -72,45 +75,48 @@ class Core(object):
         """
         Cleanup sdk resources on app exit.
         """
-        gsCleanUp()
+        _intf.gsCleanUp()
 
     @property
     @core_must_inited
     def lastErrorCode(self):
         ''' Last SDK error code '''
-        return gsGetLastErrorCode()
+        return _intf.gsGetLastErrorCode()
 
     @property
     @core_must_inited
     def lastErrorMessage(self):
         ''' Last SDK error message '''
-        return pchar2str(gsGetLastErrorMessage())
+        return pchar2str(_intf.gsGetLastErrorMessage())
 
 
     @property
+    @once
     @core_must_inited
     def productId(self):
         ''' Product Id '''
-        return pchar2str(gsGetProductId())
+        return pchar2str(_intf.gsGetProductId())
     
     @property
+    @once
     @core_must_inited
     def productName(self):
         ''' Product Name '''
-        return pchar2str(gsGetProductName())
+        return pchar2str(_intf.gsGetProductName())
     
     @property
+    @once
     @core_must_inited
     def buildId(self):
         ''' License Build Id '''
-        return gsGetBuildId()
+        return _intf.gsGetBuildId()
 
     @property
     @core_must_inited
     def entities(self):
         ''' all defined entities '''
         if not self._entities:
-            self._entities = [ Entity(gsOpenEntityByIndex(i)) for i in range(gsGetEntityCount()) ]
+            self._entities = [ Entity(_intf.gsOpenEntityByIndex(i)) for i in range(_intf.gsGetEntityCount()) ]
         return self._entities
     
     @core_must_inited
@@ -126,7 +132,7 @@ class Core(object):
 
     @core_must_inited
     def getVariable(self, name):
-        h = gsGetVariable(str2pchar(name))
+        h = _intf.gsGetVariable(str2pchar(name))
         if h is None:
             raise SdkError(f"variable ({name}) not found")
 
@@ -135,16 +141,16 @@ class Core(object):
     #----- Online Activation ----
     def isServerAlive(self, timeout:int = -1)->bool:
         """ test if license server is alive """
-        return gsIsServerAlive(timeout)
+        return _intf.gsIsServerAlive(timeout)
 
     def isValidSN(self, serial:str, timeout:int = -1)->bool:
         """ test if the serial number is a valid one """
-        return gsIsSNValid(str2pchar(serial), timeout)
+        return _intf.gsIsSNValid(str2pchar(serial), timeout)
 
     def applySN(self, serial:str, timeout:int = -1)->bool:
         """ apply serial """
         rc = ctypes.c_int(0)
-        ok = gsApplySN(str2pchar(serial), ctypes.byref(rc), None, timeout)
+        ok = _intf.gsApplySN(str2pchar(serial), ctypes.byref(rc), None, timeout)
         
         print(f"applySN: rc: ({rc}) ok: {ok}")
         logging.debug(f"applySN: rc: ({rc}) ok: {ok}")
@@ -157,11 +163,11 @@ class Core(object):
         """
         Create a request object
         """
-        return Request(gsCreateRequest())
+        return Request(_intf.gsCreateRequest())
 
     def applyLicenseCode(self, code:str, serial:str)->bool:
         """ apply a license code from vendor """
-        return gsApplyLicenseCodeEx(str2pchar(code), str2pchar(serial), None)
+        return _intf.gsApplyLicenseCodeEx(str2pchar(code), str2pchar(serial), None)
 
     @property 
     def unlockRequestCode(self)->str:

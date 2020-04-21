@@ -1,12 +1,28 @@
-from .intf import gsCreateMonitorEx, gs5_monitor_callback
+from . import intf as _intf
 from .util import SdkError, str2pchar
 
-@gs5_monitor_callback
+_hMonitor = None # internal monitor handle
+
+@_intf.gs5_monitor_callback
 def _gs_cb(eventId, hEvent, userData):
-    print(f"event: {eventId}")
+    print(f"event: {eventId} hEvent: {hEvent} userData: {userData}")
 
 def initMonitor():
-    h = gsCreateMonitorEx(_gs_cb, None, str2pchar("sdk"))
-    if h is None:
-        raise SdkError("global monitor creation failure")
+    global _hMonitor
+    if _hMonitor is None:
+        _hMonitor = _intf.gsCreateMonitorEx(_gs_cb, None, str2pchar("sdk"))
+        if _hMonitor is None:
+            raise SdkError("global monitor creation failure")
 
+
+class Monitor:
+    pass 
+
+class AppMonitor(Monitor):
+    pass
+
+class EntityMonitor(Monitor):
+    pass
+
+class LicenseMonitor(Monitor):
+    pass

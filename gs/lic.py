@@ -1,12 +1,13 @@
 """ License and License Model """
 
-from .intf import *
-from .util import *
-from .var import *
+from . import intf as _intf
+from .util import SdkError, pchar2str, str2pchar, HObject, once
+from .var import Variable
 from .act import ActionId
 
 from enum import IntEnum, Enum
 from datetime import timedelta, datetime
+import ctypes
 
 
 class LicenseId(Enum):
@@ -47,57 +48,54 @@ class License(HObject):
     def __init__(self, entity):
         self._entity = entity
 
-        h = gsOpenLicense(entity.handle)
+        h = _intf.gsOpenLicense(entity.handle)
         if not h:
             raise SdkError(f"entity ({entity.name}) has no license attached")
 
         super().__init__(h)
 
-        self._name = pchar2str(gsGetLicenseName(h))
-        self._id = LicenseId(pchar2str(gsGetLicenseId(h)))
-        self._description = pchar2str(gsGetLicenseDescription(h))
-
-        # params
-        self._params = None # late-binding
-
-        self._inspector = None
 
         # actions acceptable by this license model
-        n = gsGetActionInfoCount(h)
+        n = _intf.gsGetActionInfoCount(h)
         self._act_ids = []
         for i in range(n):
             act_id = ctypes.c_byte(0)
-            p = gsGetActionInfoByIndex(h, i, ctypes.byref(act_id))
+            p = _intf.gsGetActionInfoByIndex(h, i, ctypes.byref(act_id))
             if p:
                 self._act_ids.append(act_id.value)
 
     @property
+    @once
     def name(self):
-        return self._name
+        return pchar2str(_intf.gsGetLicenseName(self._handle))
+
     @property
+    @once
     def id(self):
-        return self._id
+
+        return LicenseId(pchar2str(_intf.gsGetLicenseId(self._handle)))
     @property
+    @once
     def description(self):
-        return self._description
+        return pchar2str(_intf.gsGetLicenseDescription(self._handle))
+        
     @property
     def entity(self):
         ''' the entity to protect '''
         return self._entity
 
     @property
+    @once
     def params(self):
-        if self._params is None:
-            self._params = { x.name: x for x in [Variable(gsGetLicenseParamByIndex(self._handle, i)) for i in range(gsGetLicenseParamCount(self._handle))] }
-        return self._params
+        return { x.name: x for x in [Variable(_intf.gsGetLicenseParamByIndex(self._handle, i)) for i in range(_intf.gsGetLicenseParamCount(self._handle))] }
     
     @property
     def valid(self):
-        return gsIsLicenseValid(self._handle)
+        return _intf.gsIsLicenseValid(self._handle)
 
     @property
     def status(self):
-        return LicenseStatus(gsGetLicenseStatus(self._handle))
+        return LicenseStatus(_intf.gsGetLicenseStatus(self._handle))
     # status helper
     @property
     def locked(self):
@@ -111,14 +109,13 @@ class License(HObject):
 
     def lock(self):
         ''' lock the license '''
-        gsLockLicense(self._handle)
+        _intf.gsLockLicense(self._handle)
 
     @property
+    @once
     def inspector(self):
         # license inspector for more details 
-        if self._inspector is None:
-            self._inspector = _Inspectors[self.id](self)
-        return self._inspector
+        return _Inspectors[self.id](self)
 
     def acceptAction(self, actId: ActionId)->bool:
         """ can action be applied to this license model? """
@@ -268,7 +265,7 @@ class LM_Session(TrialInspector):
     @property
     def secondsLeft(self)->int:
         """ how many seconds left before this session expires """
-        return 0 if self.secondsUsed >= self.secondsTotal else self.secondsTotal - self.secondsUsed
+        return 0 if self.secondsPassed >= self.secondsTotal else self.secondsTotal - self.secondsPassed
     @property 
     def expireDate(self)->datetime:
         """ when the license will be expired for this session? """
