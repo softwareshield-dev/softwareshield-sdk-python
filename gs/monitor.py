@@ -134,7 +134,8 @@ class entity_listener(object):
     _event: Event = None
 
     def __init__(self, f):
-        self._f = f
+        # save native function to be decorated so that when calling no recursion occurs
+        self._f = f if not isinstance(f, entity_listener) else f._f
         try:
             _entityListeners[self._event].append(self)
         except KeyError:
@@ -163,6 +164,10 @@ trial_expired = entity_access_invalid
 
 class entity_access_heartbeat(entity_listener):
     _event = Event.EVENT_ENTITY_ACCESS_HEARTBEAT
+
+
+
+#=================================================================    
 _hMonitor = None # internal monitor handle
 
 

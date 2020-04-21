@@ -359,7 +359,7 @@ class TestCoreAPI(unittest.TestCase):
         @gs.entity_access_starting
         @gs.entity_access_started
         def handler(e: gs.Entity, event):
-            print(f"entity {e.name} on {gs.Event(event)} >>")
+            print(f"entity {e.name} on {event} >>")
             self.assertEqual(e.id, e0.id)
 
         e0.beginAccess()
@@ -367,7 +367,7 @@ class TestCoreAPI(unittest.TestCase):
         import time
 
         print("sleep for 60 seconds...")
-        time.sleep(60)
+        time.sleep(10)
 
         e0.endAccess()
     def test_license_monitor(self):
