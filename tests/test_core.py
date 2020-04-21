@@ -4,6 +4,7 @@ import os
 from datetime import datetime, timedelta
 
 
+
 def getPathToTestCaseLicense(prj):
     return os.path.join(os.getcwd(), "tests", "data", prj)
 
@@ -341,3 +342,34 @@ class TestCoreAPI(unittest.TestCase):
         sn = '0BD3-4F5C-4EB4-9EE9'
         self.assertTrue(core.applyLicenseCode(code, sn))
         self.assertTrue(core.isAllEntitiesUnlocked())
+
+    def test_app_monitor(self):
+        pass
+    def test_entity_monitor(self):
+        e0 = gs.Core().entities[0]
+
+        @gs.entity_access_heartbeat
+        def ping(entity, event):
+            print("ping >>")
+
+        @gs.entity_access_started
+        def onStarted(entity, event):
+            print("started >>")
+
+        @gs.entity_access_starting
+        @gs.entity_access_started
+        def handler(e: gs.Entity, event):
+            print(f"entity {e.name} on {gs.Event(event)} >>")
+            self.assertEqual(e.id, e0.id)
+
+        e0.beginAccess()
+
+        import time
+
+        print("sleep for 60 seconds...")
+        time.sleep(60)
+
+        e0.endAccess()
+    def test_license_monitor(self):
+        pass
+
