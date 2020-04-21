@@ -4,7 +4,7 @@ import ctypes
 
 from ctypes import cdll, windll, WINFUNCTYPE
 from ctypes.wintypes import LPCSTR, HANDLE, HMODULE, LPVOID, INT, DWORD, UINT, BOOL, BYTE
-from ctypes import c_bool, POINTER, py_object
+from ctypes import c_bool, POINTER 
 
 import os
 
@@ -37,12 +37,11 @@ def _tryLoadCore():
 
     return hCore
 
+
 _hCore = _tryLoadCore()
 
 if _hCore is None:
     raise RuntimeError("Core lib cannot be loaded!")
-
-
 
 
 """""""""""""""""""""""
@@ -100,22 +99,33 @@ gsGetVariableAttr = WINFUNCTYPE(INT, HANDLE)((56, _hCore))
 gsIsVariableValid = WINFUNCTYPE(c_bool, HANDLE)((67, _hCore))
 
 gsGetVariableValueAsString = WINFUNCTYPE(LPCSTR, HANDLE)((57, _hCore))
-gsSetVariableValueFromString = WINFUNCTYPE(c_bool, HANDLE, LPCSTR)((58, _hCore))
+gsSetVariableValueFromString = WINFUNCTYPE(
+    c_bool, HANDLE, LPCSTR)((58, _hCore))
 
-gsGetVariableValueAsInt = WINFUNCTYPE(c_bool, HANDLE, POINTER(ctypes.c_int))((59, _hCore))
-gsSetVariableValueFromInt = WINFUNCTYPE(c_bool, HANDLE, ctypes.c_int)((60, _hCore))
+gsGetVariableValueAsInt = WINFUNCTYPE(
+    c_bool, HANDLE, POINTER(ctypes.c_int))((59, _hCore))
+gsSetVariableValueFromInt = WINFUNCTYPE(
+    c_bool, HANDLE, ctypes.c_int)((60, _hCore))
 
-gsGetVariableValueAsInt64 = WINFUNCTYPE(c_bool, HANDLE, POINTER(ctypes.c_int64))((61, _hCore))
-gsSetVariableValueFromInt64 = WINFUNCTYPE(c_bool, HANDLE, ctypes.c_int64)((62, _hCore))
+gsGetVariableValueAsInt64 = WINFUNCTYPE(
+    c_bool, HANDLE, POINTER(ctypes.c_int64))((61, _hCore))
+gsSetVariableValueFromInt64 = WINFUNCTYPE(
+    c_bool, HANDLE, ctypes.c_int64)((62, _hCore))
 
-gsGetVariableValueAsFloat = WINFUNCTYPE(c_bool, HANDLE, POINTER(ctypes.c_float))((63, _hCore))
-gsSetVariableValueFromFloat = WINFUNCTYPE(c_bool, HANDLE, ctypes.c_float)((64, _hCore))
+gsGetVariableValueAsFloat = WINFUNCTYPE(
+    c_bool, HANDLE, POINTER(ctypes.c_float))((63, _hCore))
+gsSetVariableValueFromFloat = WINFUNCTYPE(
+    c_bool, HANDLE, ctypes.c_float)((64, _hCore))
 
-gsGetVariableValueAsDouble = WINFUNCTYPE(c_bool, HANDLE, POINTER(ctypes.c_double))((78, _hCore))
-gsSetVariableValueFromDouble = WINFUNCTYPE(c_bool, HANDLE, ctypes.c_double)((79, _hCore))
+gsGetVariableValueAsDouble = WINFUNCTYPE(
+    c_bool, HANDLE, POINTER(ctypes.c_double))((78, _hCore))
+gsSetVariableValueFromDouble = WINFUNCTYPE(
+    c_bool, HANDLE, ctypes.c_double)((79, _hCore))
 
-gsGetVariableValueAsTime = WINFUNCTYPE(c_bool, HANDLE, POINTER(ctypes.c_uint64))((68, _hCore))
-gsSetVariableValueFromTime = WINFUNCTYPE(c_bool, HANDLE, ctypes.c_uint64)((69, _hCore))
+gsGetVariableValueAsTime = WINFUNCTYPE(
+    c_bool, HANDLE, POINTER(ctypes.c_uint64))((68, _hCore))
+gsSetVariableValueFromTime = WINFUNCTYPE(
+    c_bool, HANDLE, ctypes.c_uint64)((69, _hCore))
 
 # Request
 gsCreateRequest = WINFUNCTYPE(HANDLE)((36, _hCore))
@@ -124,7 +134,8 @@ gsGetRequestCode = WINFUNCTYPE(LPCSTR, HANDLE)((45, _hCore))
 
 # action
 gsGetActionInfoCount = WINFUNCTYPE(INT, HANDLE)((32, _hCore))
-gsGetActionInfoByIndex = WINFUNCTYPE(LPCSTR, HANDLE, INT, POINTER(ctypes.c_byte))((33, _hCore))
+gsGetActionInfoByIndex = WINFUNCTYPE(
+    LPCSTR, HANDLE, INT, POINTER(ctypes.c_byte))((33, _hCore))
 
 gsGetActionName = WINFUNCTYPE(LPCSTR, HANDLE)((38, _hCore))
 gsGetActionDescription = WINFUNCTYPE(LPCSTR, HANDLE)((40, _hCore))
@@ -135,11 +146,13 @@ gsGetActionParamByIndex = WINFUNCTYPE(HANDLE, HANDLE, INT)((44, _hCore))
 
 # online activation
 gsIsServerAlive = WINFUNCTYPE(c_bool, INT)((131, _hCore))
-gsApplySN = WINFUNCTYPE(c_bool, LPCSTR, POINTER(ctypes.c_int), POINTER(ctypes.c_char_p), INT)((133, _hCore))
+gsApplySN = WINFUNCTYPE(c_bool, LPCSTR, POINTER(
+    ctypes.c_int), POINTER(ctypes.c_char_p), INT)((133, _hCore))
 gsIsSNValid = WINFUNCTYPE(c_bool, LPCSTR, INT)((139, _hCore))
 
 # offline activation
-gsApplyLicenseCodeEx = WINFUNCTYPE(c_bool, LPCSTR, LPCSTR, LPCSTR)((158, _hCore))
+gsApplyLicenseCodeEx = WINFUNCTYPE(
+    c_bool, LPCSTR, LPCSTR, LPCSTR)((158, _hCore))
 
 # callbacks
 # gs5_monitor_callback = procedure(evtId: Integer; hEvent: TEventHandle; usrData: Pointer); stdcall;
@@ -147,3 +160,5 @@ gs5_monitor_callback = WINFUNCTYPE(None, INT, HANDLE, LPVOID)
 
 # function gsCreateMonitorEx(cbMonitor: gs5_monitor_callback; usrData: Pointer; const monitorName: PAnsiChar): TMonitorHandle; stdcall;
 gsCreateMonitorEx = WINFUNCTYPE(HANDLE, LPVOID, LPVOID, LPCSTR)((90, _hCore))
+# function gsGetEventSource(hEvent: TEventHandle): TEventSourceHandle; stdcall;
+gsGetEventSource = WINFUNCTYPE(HANDLE, HANDLE)((88, _hCore))

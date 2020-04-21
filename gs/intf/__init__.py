@@ -19,7 +19,7 @@ __all__ = [
 
     "gsIsServerAlive", "gsApplySN", "gsIsSNValid","gsApplyLicenseCodeEx",
 
-    "gs5_monitor_callback", "gsCreateMonitorEx"
+    "gs5_monitor_callback", "gsCreateMonitorEx", "gsGetEventSource"
 ]
 
 from .v5 import *
