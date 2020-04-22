@@ -313,6 +313,10 @@ class TestCoreAPI(unittest.TestCase):
 
             self.assertTrue(core.applySN('0BD3-4F5C-4EB4-9EE9'))
 
+            self.assertTrue(core.revokeSN('0BD3-4F5C-4EB4-9EE9'))
+
+            self.assertTrue(core.isAllEntitiesLocked())
+
         else:
             print("license server is offline")
 
@@ -350,7 +354,6 @@ class TestCoreAPI(unittest.TestCase):
         self.assertTrue(core.isAllEntitiesUnlocked())
 
 
-"""
 class TestEvents(unittest.TestCase):
     def test_app_monitor(self):
         pass
@@ -414,4 +417,3 @@ class TestEvents(unittest.TestCase):
         self.assertTrue(self.loading_called)
         self.assertTrue(self.loaded_called or self.fail_called)
         self.assertFalse(self.virgin_called)
-"""
