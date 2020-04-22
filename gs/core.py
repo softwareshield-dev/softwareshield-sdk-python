@@ -156,7 +156,15 @@ class Core(object):
         logging.debug(f"applySN: rc: ({rc}) ok: {ok}")
 
         return ok
-    
+
+    def revokeApp(self, timeout:int = -1)->bool:
+        """ revoke all of the app serial numbers """
+        return _intf.gsRevokeApp(timeout, None)
+
+    def revokeSN(self, serial: str, timeout:int = -1)->bool:
+        """ revoke a serial number """
+        return _intf.gsRevokeSN(timeout, str2pchar(serial))
+
     # ----- Offline Activation ------
     @core_must_inited
     def createRequest(self):

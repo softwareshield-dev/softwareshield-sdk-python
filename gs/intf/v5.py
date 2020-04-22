@@ -150,15 +150,15 @@ gsApplySN = WINFUNCTYPE(c_bool, LPCSTR, POINTER(
     ctypes.c_int), POINTER(ctypes.c_char_p), INT)((133, _hCore))
 gsIsSNValid = WINFUNCTYPE(c_bool, LPCSTR, INT)((139, _hCore))
 
+gsRevokeApp = WINFUNCTYPE(c_bool, INT, LPCSTR)((135, _hCore))
+gsRevokeSN = WINFUNCTYPE(c_bool, INT, LPCSTR)((144, _hCore))
+
 # offline activation
 gsApplyLicenseCodeEx = WINFUNCTYPE(
     c_bool, LPCSTR, LPCSTR, LPCSTR)((158, _hCore))
 
 # callbacks
-# gs5_monitor_callback = procedure(evtId: Integer; hEvent: TEventHandle; usrData: Pointer); stdcall;
 gs5_monitor_callback = WINFUNCTYPE(None, INT, HANDLE, LPVOID)
-
-# function gsCreateMonitorEx(cbMonitor: gs5_monitor_callback; usrData: Pointer; const monitorName: PAnsiChar): TMonitorHandle; stdcall;
 gsCreateMonitorEx = WINFUNCTYPE(HANDLE, LPVOID, LPVOID, LPCSTR)((90, _hCore))
-# function gsGetEventSource(hEvent: TEventHandle): TEventSourceHandle; stdcall;
 gsGetEventSource = WINFUNCTYPE(HANDLE, HANDLE)((88, _hCore))
+

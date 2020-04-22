@@ -17,7 +17,7 @@ __all__ = [
     "gsGetActionInfoCount", "gsGetActionInfoByIndex",
     "gsGetActionName", "gsGetActionDescription", "gsGetActionDescription","gsGetActionParamCount","gsGetActionParamByIndex",
 
-    "gsIsServerAlive", "gsApplySN", "gsIsSNValid","gsApplyLicenseCodeEx",
+    "gsIsServerAlive", "gsApplySN", "gsIsSNValid","gsApplyLicenseCodeEx","gsRevokeApp","gsRevokeSN",
 
     "gs5_monitor_callback", "gsCreateMonitorEx", "gsGetEventSource"
 ]

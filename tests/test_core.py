@@ -3,10 +3,17 @@ import gs
 import os
 from datetime import datetime, timedelta
 
-
-
 def getPathToTestCaseLicense(prj):
     return os.path.join(os.getcwd(), "tests", "data", prj)
+
+test_project = {
+    "buildId": 32,
+    "productId": "8fb82f54-ecf9-451c-9976-2344aefeaca4",
+    "productName": "Ne2_201908",
+    "pathLic": getPathToTestCaseLicense("Ne2_201908_b32.lic"),
+    "password": "rljycq&3232&RRHP"
+}
+
 
 class TestCoreStatic(unittest.TestCase):
     ''' Test static members of gs.Core '''
@@ -32,13 +39,7 @@ def init_core(self):
     #self.assertFalse(core.init("","",""))
     #self.assertTrue(core.LastErrorCode < 0)
 
-    self.buildId = 32
-    self.productId = "8fb82f54-ecf9-451c-9976-2344aefeaca4"
-    self.productName = "Ne2_201908"
-    self.pathLic = getPathToTestCaseLicense("Ne2_201908_b32.lic")
-    self.password = "rljycq&3232&RRHP"
-
-    self.assertTrue(core.init(self.productId, self.pathLic, self.password))
+    self.assertTrue(core.init(test_project['productId'], test_project['pathLic'], test_project['password']))
     self.assertEqual(core.lastErrorCode, 0)
 
 
@@ -55,9 +56,9 @@ class TestCoreAPI(unittest.TestCase):
 
     def test_productInfo(self):
         '''product info'''
-        self.assertEqual(gs.Core().productId, self.productId)
-        self.assertEqual(gs.Core().productName, self.productName)
-        self.assertEqual(gs.Core().buildId, self.buildId)
+        self.assertEqual(gs.Core().productId, test_project['productId'])
+        self.assertEqual(gs.Core().productName, test_project['productName'])
+        self.assertEqual(gs.Core().buildId, test_project['buildId'])
     
     def test_entity(self):
         entities = gs.Core().entities
@@ -349,6 +350,7 @@ class TestCoreAPI(unittest.TestCase):
         self.assertTrue(core.isAllEntitiesUnlocked())
 
 
+"""
 class TestEvents(unittest.TestCase):
     def test_app_monitor(self):
         pass
@@ -397,13 +399,13 @@ class TestEvents(unittest.TestCase):
 
         self.virgin_called = False
         @gs.license_new_install
-        def loaded(_):
+        def newinstall(_):
             print("new install...")
             self.virgin_called = True
 
         self.fail_called = False
         @gs.license_fail
-        def loaded(_):
+        def bad(_):
             print("BAD!\n")
             self.fail_called = True
 
@@ -412,3 +414,4 @@ class TestEvents(unittest.TestCase):
         self.assertTrue(self.loading_called)
         self.assertTrue(self.loaded_called or self.fail_called)
         self.assertFalse(self.virgin_called)
+"""
