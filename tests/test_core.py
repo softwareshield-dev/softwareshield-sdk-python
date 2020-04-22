@@ -27,22 +27,27 @@ class TestCoreStatic(unittest.TestCase):
             i = core3.lastErrorCode
             print("i=%d", i)
 
+def init_core(self):
+    core = gs.Core()
+    #self.assertFalse(core.init("","",""))
+    #self.assertTrue(core.LastErrorCode < 0)
+
+    self.buildId = 32
+    self.productId = "8fb82f54-ecf9-451c-9976-2344aefeaca4"
+    self.productName = "Ne2_201908"
+    self.pathLic = getPathToTestCaseLicense("Ne2_201908_b32.lic")
+    self.password = "rljycq&3232&RRHP"
+
+    self.assertTrue(core.init(self.productId, self.pathLic, self.password))
+    self.assertEqual(core.lastErrorCode, 0)
+
+
+
 class TestCoreAPI(unittest.TestCase):
 #    def test_init_m(self):
 #        self.assertFalse(gs.Core().init("","",""))
     def setUp(self):
-        core = gs.Core()
-        #self.assertFalse(core.init("","",""))
-        #self.assertTrue(core.LastErrorCode < 0)
-
-        self.buildId = 32
-        self.productId = "8fb82f54-ecf9-451c-9976-2344aefeaca4"
-        self.productName = "Ne2_201908"
-        self.pathLic = getPathToTestCaseLicense("Ne2_201908_b32.lic")
-        self.password = "rljycq&3232&RRHP"
-
-        self.assertTrue(core.init(self.productId, self.pathLic, self.password))
-        self.assertEqual(core.lastErrorCode, 0)
+        init_core(self)
 
     @classmethod
     def tearDownClass(cls):
@@ -343,9 +348,13 @@ class TestCoreAPI(unittest.TestCase):
         self.assertTrue(core.applyLicenseCode(code, sn))
         self.assertTrue(core.isAllEntitiesUnlocked())
 
+
+class TestEvents(unittest.TestCase):
     def test_app_monitor(self):
         pass
     def test_entity_monitor(self):
+        init_core(self)
+        
         e0 = gs.Core().entities[0]
 
         @gs.entity_access_heartbeat
@@ -370,6 +379,36 @@ class TestCoreAPI(unittest.TestCase):
         time.sleep(10)
 
         e0.endAccess()
-    def test_license_monitor(self):
-        pass
 
+
+
+    def test_license_monitor(self):
+        self.loading_called = False
+        @gs.license_loading
+        def loading(_):
+            print("\nlicense loading...")
+            self.loading_called = True
+
+        self.loaded_called = False
+        @gs.license_loaded
+        def loaded(_):
+            print("done!\n")
+            self.loaded_called = True
+
+        self.virgin_called = False
+        @gs.license_new_install
+        def loaded(_):
+            print("new install...")
+            self.virgin_called = True
+
+        self.fail_called = False
+        @gs.license_fail
+        def loaded(_):
+            print("BAD!\n")
+            self.fail_called = True
+
+        init_core(self)
+
+        self.assertTrue(self.loading_called)
+        self.assertTrue(self.loaded_called or self.fail_called)
+        self.assertFalse(self.virgin_called)

@@ -125,11 +125,11 @@ def getEventType(eventId: int)->EventType:
 
 
 # Event Listeners
-_appListeners = []
+_appListeners = {}
 _entityListeners = {}
-_licListeners = []
+_licListeners = {}
 
-# event listen decorators
+# entity event decorators
 class entity_listener(object):
     _event: Event = None
 
@@ -165,7 +165,67 @@ trial_expired = entity_access_invalid
 class entity_access_heartbeat(entity_listener):
     _event = Event.EVENT_ENTITY_ACCESS_HEARTBEAT
 
+class entity_action_applied(entity_listener):
+    _event = Event.EVENT_ENTITY_ACTION_APPLIED
 
+
+# license event decorators
+class license_listener(object):
+    _event: Event = None
+
+    def __init__(self, f):
+        # save native function to be decorated so that when calling no recursion occurs
+        self._f = f if not isinstance(f, license_listener) else f._f
+        try:
+            _licListeners[self._event].append(self)
+        except KeyError:
+            _licListeners[self._event] = [self]
+
+    def __call__(self, event):
+        self._f(event)
+
+
+class license_loading(license_listener):
+    _event = Event.EVENT_LICENSE_LOADING
+
+class license_loaded(license_listener):
+    _event = Event.EVENT_LICENSE_READY
+
+class license_new_install(license_listener):
+    _event = Event.EVENT_LICENSE_NEWINSTALL
+
+class license_fail(license_listener):
+    _event = Event.EVENT_LICENSE_FAIL
+
+# application event decorators
+class app_listener(object):
+    _event: Event = None
+
+    def __init__(self, f):
+        # save native function to be decorated so that when calling no recursion occurs
+        self._f = f if not isinstance(f, app_listener) else f._f
+        try:
+            _appListeners[self._event].append(self)
+        except KeyError:
+            _appListeners[self._event] = [self]
+
+    def __call__(self, event):
+        self._f(event)
+
+class app_begin(app_listener):
+    _event = Event.EVENT_APP_BEGIN
+
+class app_end(app_listener):
+    _event = Event.EVENT_APP_END
+
+class app_run(app_listener):
+    _event = Event.EVENT_APP_RUN
+
+class app_clock_rollbacked(app_listener):
+    _event = Event.EVENT_APP_CLOCK_ROLLBACK
+
+class app_integrity_corrupted(app_listener):
+    _event = Event.EVENT_APP_INTEGRITY_CORRUPT
 
 #=================================================================    
 _hMonitor = None # internal monitor handle
@@ -195,7 +255,14 @@ def _gs_cb(eventId, hEvent, userData):
     if eventType == EventType.EVENT_TYPE_UNKNOWN:
         logging.debug(f"Unknown eventId: {eventId}")
     elif eventType == EventType.EVENT_TYPE_APP:
-        ...
+        try:
+            listeners = _appListeners[eventId]
+            if len(listeners) > 0:
+                for x in listeners:
+                    x(event)
+        except KeyError:
+            pass # no listeners
+
     elif eventType == EventType.EVENT_TYPE_ENTITY:
         try:
             listeners = _entityListeners[eventId]
@@ -207,7 +274,13 @@ def _gs_cb(eventId, hEvent, userData):
             pass # no listeners
 
     elif eventType == EventType.EVENT_TYPE_LICENSE:
-        ...
+        try:
+            listeners = _licListeners[eventId]
+            if len(listeners) > 0:
+                for x in listeners:
+                    x(event)
+        except KeyError:
+            pass # no listeners
 
         
 
